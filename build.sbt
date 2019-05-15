@@ -1,12 +1,7 @@
-val dottyVersion = "0.14.0-RC1"
+scalaVersion := "2.12.8"
 
-lazy val root = project
-  .in(file("."))
-  .settings(
-    name := "dotty-simple",
-    version := "0.1.0",
+name := "tum-rmp"
+organization := "de.tum.in"
+version := "1.0"
 
-    scalaVersion := dottyVersion,
-
-    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
-  )
+libraryDependencies += "org.typelevel" %% "cats-core" % "1.6.0"
