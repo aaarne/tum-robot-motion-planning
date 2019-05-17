@@ -3,6 +3,8 @@ import breeze.plot._
 
 object Main extends App {
 
+  val d = 1.0
+
   val f = Figure("Test")
   val x = linspace(0.0, 1.0)
 
