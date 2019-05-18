@@ -3,22 +3,19 @@ package ex1.configuration_space
 import breeze.linalg._
 import breeze.numerics.toRadians
 import breeze.plot._
+import breeze.stats.distributions._
 
-class ConfigurationSpace extends CollisionChecker {
+class ConfigurationSpace extends CollisionChecker with RandomRects {
 
   val robot = new Robot(List(1, 1))
-  val rects = (0 until 2).map{_ =>
-    Rectangle(DenseVector.rand(2), .5, .5)
-  }.toList
+  val rects = createRandomRects(1).toList
 
   def computeConfigurationSpace: DenseMatrix[Double] = {
     val q1 = toRadians(linspace(0, 180, 181))
     val q2 = toRadians(linspace(0, 359, 360))
-//    val q1 = toRadians(DenseVector(45.0))
-//    val q2 = toRadians(DenseVector(45.0))
 
     DenseMatrix.tabulate(q1.size, q2.size){
-      case (i, j) => if (checkCollision(robot, List(q1(i), q2(j)), rects)) 0.0 else 1.0
+      case (i, j) => if (checkCollision(robot, List(q1(i), q2(j)), rects, true)) 0.0 else 1.0
     }
   }
 }
@@ -32,11 +29,11 @@ class ShowConfigurationSpace extends ConfigurationSpace with Plotter {
   rects foreach (r => plotRectangle(p, r))
 
   val confspace = computeConfigurationSpace
-  println(confspace)
+  println(sum(confspace))
   println(s"Size of matrix: (${confspace.rows}, ${confspace.cols})")
 
   val f2 = Figure("Configuration Space")
-  f2 subplot 0 += image(confspace)
+  f2 subplot 0 += image(-1.0 * confspace.t)
 
   f.refresh()
   f2.refresh()

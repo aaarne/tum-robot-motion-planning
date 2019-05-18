@@ -15,13 +15,16 @@ trait CollisionChecker {
       case (p1, p2) => rectangle.doesLineCollide(p1, p2)
     }
 
-  def checkCollision(robot: Robot, jointAngles: List[Double], rectangles: List[Rectangle]): Boolean = {
+  def checkCollision(robot: Robot, jointAngles: List[Double], rectangles: List[Rectangle]): Boolean =
+    checkCollision(robot, jointAngles, rectangles, ignoreTable = false)
+
+  def checkCollision(robot: Robot, jointAngles: List[Double], rectangles: List[Rectangle], ignoreTable: Boolean): Boolean = {
     val rects = rectangles exists (r => checkCollisionWithRect(robot, jointAngles, r))
-    rects || checkTable(robot, jointAngles)
+    rects || (!ignoreTable && checkTable(robot, jointAngles))
   }
 
   def checkTable(robot: Robot, jointAngles: List[Double]): Boolean =
-    robot points jointAngles exists {p =>
+    (robot points jointAngles) exists {p =>
       p(1) < 0
     }
 }
