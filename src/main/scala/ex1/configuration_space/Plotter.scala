@@ -14,12 +14,10 @@ trait Plotter {
     })
   }
 
-  def plotRobot(p: Plot, robot: Robot, jointAngles: List[Double]) =
-    plotPointList(p, robot points jointAngles)
+  def plotRobot(robot: RobotState)(implicit p: Plot) =
+    plotPointList(p, robot.points)
 
-  def plotRectangle(p: Plot, rect: Rectangle) = {
+  def plotRectangle(rect: Rectangle)(implicit p: Plot) = {
     plotPointList(p, List(0, 2, 3, 1, 0) map rect.corners)
   }
-
-
 }
