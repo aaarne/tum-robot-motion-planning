@@ -5,7 +5,7 @@ import breeze.stats.distributions._
 
 trait RandomRects {
 
-  private val g = Gaussian(0, .7)
+  private val g = Uniform(0.1, 0.5)
   private val x = Uniform(-1, 1)
   private val y = Uniform(0, 1)
 

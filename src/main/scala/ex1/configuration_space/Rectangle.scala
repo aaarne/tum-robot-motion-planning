@@ -4,6 +4,8 @@ import breeze.linalg._
 
 case class Rectangle(center: Vector[Double], width: Double, height: Double) {
 
+  List(width, height) foreach (d => if (d < 0) throw new IllegalArgumentException("Must not be negative"))
+
   def corners: List[Vector[Double]] = {
     for {
       xsign <- List(-1, 1)
