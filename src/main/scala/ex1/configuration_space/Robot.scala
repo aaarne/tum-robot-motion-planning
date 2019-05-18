@@ -8,7 +8,7 @@ class Robot(linkLengths: List[Double]) {
 
   type Frame = Matrix[Double]
 
-  case class Link(jointAngle: Double, linkLength: Double)
+  private case class Link(jointAngle: Double, linkLength: Double)
 
   def frames(jointAngles: List[Double]): List[Frame] = {
 
@@ -30,5 +30,8 @@ class Robot(linkLengths: List[Double]) {
     frameRec(links, DenseMatrix.eye[Double](3))
 
   }
+
+  def points(jointAngles: List[Double]): List[Vector[Double]] =
+    frames(jointAngles).map(frame => DenseVector(frame(0, 2), frame(1, 2)))
 
 }
