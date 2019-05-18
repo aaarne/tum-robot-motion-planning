@@ -1,4 +1,4 @@
-import ex1.configuration_space.{ConfigurationSpace, ShowConfigurationSpace}
+import ex1.configuration_space.ShowConfigurationSpace
 
 object Main extends App {
 

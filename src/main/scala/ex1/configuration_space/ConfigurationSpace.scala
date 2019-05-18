@@ -3,7 +3,6 @@ package ex1.configuration_space
 import breeze.linalg._
 import breeze.numerics.toRadians
 import breeze.plot._
-import breeze.stats.distributions._
 
 class ConfigurationSpace extends CollisionChecker with RandomRects {
 
