@@ -1,4 +1,4 @@
-package ex1.configuration_space
+package tumrmp.configuration_space
 
 import breeze.linalg._
 
@@ -6,7 +6,7 @@ case class Rectangle(center: Vector[Double], width: Double, height: Double) {
 
   List(width, height) foreach (d => if (d < 0) throw new IllegalArgumentException("Must not be negative"))
 
-  def corners: List[Vector[Double]] = {
+  lazy val corners: List[Vector[Double]] = {
     for {
       xsign <- List(-1, 1)
       ysign <- List(-1, 1)
@@ -19,13 +19,15 @@ case class Rectangle(center: Vector[Double], width: Double, height: Double) {
     }
   }
 
-  def doesLineCollide(p1: Vector[Double], p2: Vector[Double]): Boolean = {
-    val x = linspace(p1(0), p2(0))
-    val y = linspace(p1(1), p2(1))
-    (x.valuesIterator zip y.valuesIterator) exists {
-      case (x1, y1) => doesPointCollide(DenseVector(x1, y1))
+  def doesLineCollide(l: LineSegment): Boolean =
+    lineSegments exists l.intersects
+
+
+  lazy val lineSegments: List[LineSegment] = {
+    val c = List(0, 2, 3, 1, 0) map corners
+    (c zip c.tail) map {
+      case (p1, p2) => LineSegment(p1, p2)
     }
   }
-
 
 }

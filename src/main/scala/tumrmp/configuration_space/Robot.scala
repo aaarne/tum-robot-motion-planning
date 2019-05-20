@@ -1,4 +1,4 @@
-package ex1.configuration_space
+package tumrmp.configuration_space
 
 import breeze.linalg._
 import breeze.numerics.{cos, sin}
@@ -21,24 +21,26 @@ class Robot(linkLengths: List[Double]) {
         )
       }
 
-    def frameRec(links: List[(Double, Double)], previous: Frame): List[Frame] =
+    def frameRec(links: List[(Double, Double)], acc: List[Frame]): List[Frame] =
       links match {
-        case Nil => previous :: Nil
-        case link :: rest => previous :: frameRec(rest, previous * createTrafo(link))
+        case Nil => acc.reverse
+        case link :: rest => frameRec(rest, acc.head * createTrafo(link) :: acc)
       }
 
-    frameRec(jointAngles zip linkLengths, DenseMatrix.eye[Double](3))
+    frameRec(jointAngles zip linkLengths, DenseMatrix.eye[Double](3) :: Nil)
   }
 
   protected def extractPoints(frames: List[Frame]): List[Vector[Double]] =
     frames map (frame => DenseVector(frame(0, 2), frame(1, 2)))
 
-  def moveTo(jointAngles: List[Double]): RobotState =
-    RobotState(linkLengths, jointAngles)
+  def moveTo(jointAngles: List[Double]): RobotState = RobotState(linkLengths, jointAngles)
 
 }
 
 case class RobotState(linkLengths: List[Double], jointAngles: List[Double]) extends Robot(linkLengths) {
   lazy val frames: List[Frame] = frames(jointAngles)
   lazy val points: List[Vector[Double]] = extractPoints(frames)
+  lazy val lineSegments: List[LineSegment] = (points zip points.tail) map {
+    case (p1, p2) => LineSegment(p1, p2)
+  }
 }

@@ -1,4 +1,4 @@
-package ex1.configuration_space
+package tumrmp.configuration_space
 
 import breeze.linalg.DenseVector
 import breeze.stats.distributions._

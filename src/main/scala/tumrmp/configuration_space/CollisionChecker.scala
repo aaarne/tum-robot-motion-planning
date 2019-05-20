@@ -1,4 +1,4 @@
-package ex1.configuration_space
+package tumrmp.configuration_space
 
 trait CollisionChecker {
 
@@ -8,9 +8,7 @@ trait CollisionChecker {
   }
 
   def checkCollisionWithRect(robot: RobotState)(rectangle: Rectangle): Boolean =
-    (robot.points zip robot.points.tail) exists {
-      case (p1, p2) => rectangle.doesLineCollide(p1, p2)
-    }
+    robot.lineSegments exists rectangle.doesLineCollide
 
   def checkTable(robot: RobotState): Boolean = robot.points exists (p => p(1) < 0)
 }

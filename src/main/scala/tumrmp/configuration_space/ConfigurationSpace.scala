@@ -1,4 +1,4 @@
-package ex1.configuration_space
+package tumrmp.configuration_space
 
 import breeze.linalg._
 import breeze.numerics.toRadians
@@ -15,7 +15,7 @@ class ConfigurationSpace extends CollisionChecker with RandomRects {
     }
   }
   val rects: List[Rectangle] = createRandomRects(2).toList
-  val robot = new Robot(List(1, 1))
+  val robot = new Robot(List(.7, .7))
 }
 
 class ShowConfigurationSpace extends ConfigurationSpace with Plotter {

@@ -1,7 +1,7 @@
 package ex1
 
 import breeze.linalg._
-import ex1.configuration_space.{Rectangle, Robot}
+import tumrmp.configuration_space.{LineSegment, Rectangle, Robot}
 import org.scalatest.{FlatSpec, Matchers}
 
 class Ex1Suite extends FlatSpec with Matchers {
@@ -13,8 +13,13 @@ class Ex1Suite extends FlatSpec with Matchers {
 
     val longRobot = new Robot(List(1, 1, 1, 1))
     val wrapped = List(.5*math.Pi, .5*math.Pi, .5*math.Pi, .5*math.Pi)
+    val zigzag = List(0, .5*math.Pi, -.5*math.Pi, .5*math.Pi)
 
     val rect = Rectangle(DenseVector(0.0, 0.0), 1.0, 1.0)
+
+    val l1 = LineSegment(DenseVector(-1.0, 0), DenseVector(1.0, 0.0))
+    val l2 = LineSegment(DenseVector(0, -1.0), DenseVector(0.0 , 1.0))
+    val l3 = LineSegment(DenseVector(2.0, 0.0), DenseVector(0.0, 2.0))
   }
 
   "The first frame" should "always be an identity matrix" in {
@@ -50,7 +55,7 @@ class Ex1Suite extends FlatSpec with Matchers {
     }
   }
 
-  "The wrapped robot" should "be at identity as well" in {
+  "The long robot" should "be at identity as well when wrapped" in {
     new TestEnvironment {
       val frames = longRobot frames wrapped
       val expected: Matrix[Double] = DenseMatrix.eye[Double](3)
@@ -60,6 +65,13 @@ class Ex1Suite extends FlatSpec with Matchers {
 
     }
   }
+
+  it should "be at (2, 2) for the zigzag pose" in new TestEnvironment {
+    val lastpoint = (longRobot moveTo zigzag).points.last
+    val diff = sum(lastpoint - Vector(2.0, 2.0))
+    diff should be (0.0 +- 1e-6)
+  }
+
 
   "Collision with rectangle" should "appear at (0,0)" in {
     new TestEnvironment {
@@ -74,11 +86,39 @@ class Ex1Suite extends FlatSpec with Matchers {
   }
 
   it should "appear on line from (-1,-1) to (1, 1)" in new TestEnvironment {
-    rect doesLineCollide(DenseVector(-1.0, -1.0), DenseVector(1.0, 1.0))
+    rect doesLineCollide LineSegment(DenseVector(-1.0, -1.0), DenseVector(1.0, 1.0))
   }
 
   it should "not appear on line from (-1, -1) to (-2, -2)" in new TestEnvironment {
-    rect doesLineCollide(DenseVector(-1.0, -1.0), DenseVector(-2.0, -2.0))
+    rect doesLineCollide LineSegment(DenseVector(-1.0, -1.0), DenseVector(-2.0, -2.0))
+  }
+
+  "Line l1" should "intersect l2" in new TestEnvironment {
+    l1 intersects l2 should equal (true)
+  }
+
+  it should "not intersect l3" in new TestEnvironment {
+    l1 intersects l3 should equal (false)
+  }
+
+  it should "contain (0,0)" in new TestEnvironment {
+    l1 onLine DenseVector(0.0, 0.0) should be (true)
+  }
+
+  it should "contain (1,0)" in new TestEnvironment {
+    l1 onLine DenseVector(1.0, 0.0) should be (true)
+  }
+
+  it should "not contain (0,1)" in new TestEnvironment {
+    l1 onLine DenseVector(0.0, 1.0) should be (false)
+  }
+
+  it should "be at distance 1.0 from (0,1)" in new TestEnvironment {
+    l1 dist DenseVector(0.0, 1.0) should be (1.0 +- 1e-6)
+  }
+
+  it should "at at no distance from (1,0)" in new TestEnvironment {
+    l1 dist DenseVector(1.0, 0.0) should be (0.0 +- 1e-6)
   }
 
 }
