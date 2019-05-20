@@ -1,28 +1,27 @@
 package tumrmp.configuration_space
 
-import breeze.linalg._
 import breeze.plot._
+import tumrmp.geometry.LineSegment
+
+trait Plottable {
+  def lineSegments: List[LineSegment]
+}
 
 trait Plotter {
 
-  private def plotPointList(p: Plot, color: String, points: List[Vector[Double]]): Unit = {
-    (points zip points.tail) map {
-      case (p1, p2) => LineSegment(p1, p2)
-    } foreach plotLineSegment(p, color)
-
+  def plot(color: String)(shape: Plottable): Seq[Series] = {
+    plotShape(breeze.plot.plot(_, _, style = '-', colorcode = color))(shape)
   }
 
-  private def plotLineSegment(p: Plot, color: String)(lineSegment: LineSegment) = lineSegment match {
-    case LineSegment(p1, p2) =>
-      val x = List(p1(0), p2(0))
-      val y = List(p1(1), p2(1))
-      p += plot(x, y, colorcode = color)
-      p2
+  def plotShape(f: (List[Double], List[Double]) => Series)(shape: Plottable): Seq[Series] = {
+    shape.lineSegments map plotLineSegment(f)
   }
 
-  def plotRobot(robot: RobotState)(implicit p: Plot) =
-    plotPointList(p, "blue", robot.points)
-
-  def plotRectangle(rect: Rectangle)(implicit p: Plot) =
-    rect.lineSegments foreach plotLineSegment(p, "red")
+  private def plotLineSegment(f: (List[Double], List[Double]) => Series)(lineSegment: LineSegment): Series =
+    lineSegment match {
+      case LineSegment(p1, p2) =>
+        val x = List(p1(0), p2(0))
+        val y = List(p1(1), p2(1))
+        f(x, y)
+    }
 }

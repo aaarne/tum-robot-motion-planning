@@ -1,8 +1,10 @@
 package ex1
 
 import breeze.linalg._
-import tumrmp.configuration_space.{LineSegment, Rectangle, Robot}
 import org.scalatest.{FlatSpec, Matchers}
+import tumrmp.configuration_space.Robot
+import tumrmp.geometry
+import tumrmp.geometry.{LineSegment, Rectangle}
 
 class Ex1Suite extends FlatSpec with Matchers {
 
@@ -18,8 +20,8 @@ class Ex1Suite extends FlatSpec with Matchers {
     val rect = Rectangle(DenseVector(0.0, 0.0), 1.0, 1.0)
 
     val l1 = LineSegment(DenseVector(-1.0, 0), DenseVector(1.0, 0.0))
-    val l2 = LineSegment(DenseVector(0, -1.0), DenseVector(0.0 , 1.0))
-    val l3 = LineSegment(DenseVector(2.0, 0.0), DenseVector(0.0, 2.0))
+    val l2 = geometry.LineSegment(DenseVector(0, -1.0), DenseVector(0.0, 1.0))
+    val l3 = geometry.LineSegment(DenseVector(2.0, 0.0), DenseVector(0.0, 2.0))
   }
 
   "The first frame" should "always be an identity matrix" in {
@@ -86,11 +88,11 @@ class Ex1Suite extends FlatSpec with Matchers {
   }
 
   it should "appear on line from (-1,-1) to (1, 1)" in new TestEnvironment {
-    rect doesLineCollide LineSegment(DenseVector(-1.0, -1.0), DenseVector(1.0, 1.0))
+    rect doesLineCollide geometry.LineSegment(DenseVector(-1.0, -1.0), DenseVector(1.0, 1.0))
   }
 
   it should "not appear on line from (-1, -1) to (-2, -2)" in new TestEnvironment {
-    rect doesLineCollide LineSegment(DenseVector(-1.0, -1.0), DenseVector(-2.0, -2.0))
+    rect doesLineCollide geometry.LineSegment(DenseVector(-1.0, -1.0), DenseVector(-2.0, -2.0))
   }
 
   "Line l1" should "intersect l2" in new TestEnvironment {

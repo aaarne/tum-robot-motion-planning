@@ -1,6 +1,6 @@
-package tumrmp.configuration_space
+package tumrmp.geometry
 
-import breeze.linalg._
+import breeze.linalg.{Vector, norm, sum}
 
 case class LineSegment(p1: Vector[Double], p2: Vector[Double]) {
 
@@ -8,6 +8,9 @@ case class LineSegment(p1: Vector[Double], p2: Vector[Double]) {
 
   def intersects(other: LineSegment): Boolean =
     (ccw(p1, other.p1, other.p2) != ccw(p2, other.p1, other.p2)) && (ccw(p1, p2, other.p1) != ccw(p1, p2, other.p2))
+
+  private def ccw(a: Vector[Double], b: Vector[Double], c: Vector[Double]): Boolean =
+    (c(1) - a(1)) * (b(0) - a(0)) > (b(1) - a(1)) * (c(0) - a(0))
 
   def onLine(p: Vector[Double], tol: Double = 1e-6): Boolean = dist(p) match {
     case d if d >= -tol && d <= tol => true
@@ -25,8 +28,5 @@ case class LineSegment(p1: Vector[Double], p2: Vector[Double]) {
 
     norm((p1 + u * d) - p)
   }
-
-  private def ccw(a: Vector[Double], b: Vector[Double], c: Vector[Double]): Boolean =
-    (c(1) - a(1)) * (b(0) - a(0)) > (b(1) - a(1)) * (c(0) - a(0))
 
 }

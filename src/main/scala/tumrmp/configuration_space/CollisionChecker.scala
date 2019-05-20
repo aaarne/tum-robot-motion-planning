@@ -1,5 +1,7 @@
 package tumrmp.configuration_space
 
+import tumrmp.geometry.Rectangle
+
 trait CollisionChecker {
 
   def checkCollision(robot: RobotState, rectangles: List[Rectangle], ignoreTable: Boolean = false): Boolean = {

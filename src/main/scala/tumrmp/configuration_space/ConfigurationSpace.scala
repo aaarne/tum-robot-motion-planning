@@ -2,7 +2,8 @@ package tumrmp.configuration_space
 
 import breeze.linalg._
 import breeze.numerics.toRadians
-import breeze.plot._
+import breeze.plot.{Figure, Plot, image}
+import tumrmp.geometry.Rectangle
 
 class ConfigurationSpace extends CollisionChecker with RandomRects {
 
@@ -22,9 +23,8 @@ class ShowConfigurationSpace extends ConfigurationSpace with Plotter {
 
   val f = Figure("Robot Visualizer")
 
-  implicit val p: Plot = f subplot 0
-  plotRobot(robot moveTo List(.25 * math.Pi,.25 * math.Pi))
-  rects foreach plotRectangle
+  f subplot 0 ++= plot("blue")(robot moveTo List(.25 * math.Pi, 0.25 * math.Pi))
+  f subplot 0 ++= rects flatMap plot("red")
 
   println(s"Percentage of confspace collision-free: ${100*sum(confspace)/confspace.size}%")
 

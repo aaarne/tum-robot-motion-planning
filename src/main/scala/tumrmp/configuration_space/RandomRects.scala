@@ -2,6 +2,8 @@ package tumrmp.configuration_space
 
 import breeze.linalg.DenseVector
 import breeze.stats.distributions._
+import tumrmp.geometry
+import tumrmp.geometry.Rectangle
 
 trait RandomRects {
 
@@ -11,7 +13,7 @@ trait RandomRects {
 
   def createRandomRects(amount: Int): Seq[Rectangle] =
     (0 until amount).map { _ =>
-      Rectangle(DenseVector(x.sample(), y.sample()), g.sample(), g.sample())
+      geometry.Rectangle(DenseVector(x.sample(), y.sample()), g.sample(), g.sample())
     }.filterNot(_.doesPointCollide(DenseVector(0.0, 0.0)))
 
 }
