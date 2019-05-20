@@ -75,24 +75,28 @@ class Ex1Suite extends FlatSpec with Matchers {
   }
 
 
-  "Collision with rectangle" should "appear at (0,0)" in {
+  "Rectangle" should "collide at (0,0)" in {
     new TestEnvironment {
       rect doesPointCollide DenseVector(0.0, 0.0) should equal (true)
     }
   }
 
-  it should "not appear at (1,0)" in {
+  it should "not collide at (1,0)" in {
     new TestEnvironment {
       rect doesPointCollide DenseVector(1.0, 0.0) should equal (false)
     }
   }
 
-  it should "appear on line from (-1,-1) to (1, 1)" in new TestEnvironment {
+  it should "collide with line from (-1,-1) to (1, 1)" in new TestEnvironment {
     rect doesLineCollide geometry.LineSegment(DenseVector(-1.0, -1.0), DenseVector(1.0, 1.0))
   }
 
-  it should "not appear on line from (-1, -1) to (-2, -2)" in new TestEnvironment {
+  it should "not collide with line from (-1, -1) to (-2, -2)" in new TestEnvironment {
     rect doesLineCollide geometry.LineSegment(DenseVector(-1.0, -1.0), DenseVector(-2.0, -2.0))
+  }
+
+  it should "not be complex" in new TestEnvironment {
+    rect.complex should be (false)
   }
 
   "Line l1" should "intersect l2" in new TestEnvironment {

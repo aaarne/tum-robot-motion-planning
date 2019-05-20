@@ -3,7 +3,7 @@ package tumrmp.configuration_space
 import breeze.linalg._
 import breeze.numerics.{cos, sin}
 import tumrmp.geometry
-import tumrmp.geometry.LineSegment
+import tumrmp.geometry.{LineSegment, Plottable}
 
 
 class Robot(linkLengths: List[Double]) {

@@ -3,7 +3,7 @@ package tumrmp.configuration_space
 import breeze.linalg._
 import breeze.numerics.toRadians
 import breeze.plot.{Figure, Plot, image}
-import tumrmp.geometry.Rectangle
+import tumrmp.geometry.{Plotter, Rectangle}
 
 class ConfigurationSpace extends CollisionChecker with RandomRects {
 
@@ -19,22 +19,25 @@ class ConfigurationSpace extends CollisionChecker with RandomRects {
   val robot = new Robot(List(.7, .7))
 }
 
-class ShowConfigurationSpace extends ConfigurationSpace with Plotter {
+object ShowConfigurationSpace extends ConfigurationSpace with Plotter with Runnable {
 
-  val f = Figure("Robot Visualizer")
+  override def run(): Unit = {
+    val f = Figure("Robot Visualizer")
 
-  f subplot 0 ++= plot("blue")(robot moveTo List(.25 * math.Pi, 0.25 * math.Pi))
-  f subplot 0 ++= rects flatMap plot("red")
+    f subplot 0 ++= plot("blue")(robot moveTo List(.25 * math.Pi, 0.25 * math.Pi))
+    f subplot 0 ++= rects flatMap plot("red")
 
-  println(s"Percentage of confspace collision-free: ${100*sum(confspace)/confspace.size}%")
+    println(s"Percentage of confspace collision-free: ${100*sum(confspace)/confspace.size}%")
 
-  val f2 = Figure("Configuration Space")
-  val p2: Plot = f2 subplot 0
-  p2 += image(-1.0 * confspace.t)
-  p2.xlabel = "q1"
-  p2.ylabel = "q2"
+    val f2 = Figure("Configuration Space")
+    val p2: Plot = f2 subplot 0
+    p2 += image(-1.0 * confspace.t)
+    p2.xlabel = "q1"
+    p2.ylabel = "q2"
 
-  f.refresh()
-  f2.refresh()
+    f.refresh()
+    f2.refresh()
+
+  }
 
 }
