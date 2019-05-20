@@ -2,7 +2,24 @@ package tumrmp.geometry
 
 import breeze.linalg._
 
-trait Polygon extends Plottable {
+trait Shape {
+
+  def lineSegments: List[LineSegment]
+
+  def doesLineCollide(l: LineSegment): Boolean =
+    lineSegments exists (l2 => l.intersects(l2, allow_terminal_intersection = true))
+
+  lazy val complex: Boolean =
+    lineSegments exists { l =>
+      lineSegments.filterNot(l2 => l == l2) exists (l2 => l.intersects(l2, allow_terminal_intersection = true))
+    }
+}
+
+trait Polygon extends Shape with ConvexityCheck {
+
+  val vertices: List[Vector[Double]]
+
+  def size: Int = vertices.size
 
   override lazy val lineSegments: List[LineSegment] = {
     (vertices zip (vertices.tail :+ vertices.head)) map {
@@ -10,16 +27,7 @@ trait Polygon extends Plottable {
     }
   }
 
-  val vertices: List[Vector[Double]]
-
-  def doesLineCollide(l: LineSegment): Boolean =
-    lineSegments exists l.intersects
-
-  lazy val complex: Boolean =
-    lineSegments exists {l =>
-      lineSegments.filterNot(l2 => l == l2) exists l.intersects
-    }
-
+  lazy val convex: Boolean = !complex && isConvex(vertices)
 }
 
 case class Rectangle(center: Vector[Double], width: Double, height: Double) extends Polygon {

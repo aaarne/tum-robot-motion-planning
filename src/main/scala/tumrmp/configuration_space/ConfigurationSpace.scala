@@ -24,8 +24,12 @@ object ShowConfigurationSpace extends ConfigurationSpace with Plotter with Runna
   override def run(): Unit = {
     val f = Figure("Robot Visualizer")
 
-    f subplot 0 ++= plot("blue")(robot moveTo List(.25 * math.Pi, 0.25 * math.Pi))
-    f subplot 0 ++= rects flatMap plot("red")
+    f subplot 0 += plot(robot moveTo List(.25 * math.Pi, 0.25 * math.Pi), "blue", "Robot")
+    f subplot 0 ++= rects.zipWithIndex map {
+      case (shape, i) => plot(shape, "red", s"Obstacle $i")
+    }
+
+    f.subplot(0).legend = true
 
     println(s"Percentage of confspace collision-free: ${100*sum(confspace)/confspace.size}%")
 

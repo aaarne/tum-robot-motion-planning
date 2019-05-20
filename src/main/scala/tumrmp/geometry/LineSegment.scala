@@ -6,8 +6,11 @@ case class LineSegment(p1: Vector[Double], p2: Vector[Double]) {
 
   assert(p1.length == 2 && p2.length == 2)
 
-  def intersects(other: LineSegment): Boolean =
-    (ccw(p1, other.p1, other.p2) != ccw(p2, other.p1, other.p2)) && (ccw(p1, p2, other.p1) != ccw(p1, p2, other.p2))
+  def intersects(other: LineSegment, allow_terminal_intersection: Boolean = false): Boolean = {
+    val result = (ccw(p1, other.p1, other.p2) != ccw(p2, other.p1, other.p2)) && (ccw(p1, p2, other.p1) != ccw(p1, p2, other.p2))
+    val intersectionAtVertex = List(other.p1, other.p2) map dist exists (d => d < 1e-6)
+    result && (!allow_terminal_intersection || !intersectionAtVertex)
+  }
 
   private def ccw(a: Vector[Double], b: Vector[Double], c: Vector[Double]): Boolean =
     (c(1) - a(1)) * (b(0) - a(0)) > (b(1) - a(1)) * (c(0) - a(0))

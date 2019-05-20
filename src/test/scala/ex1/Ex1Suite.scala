@@ -4,7 +4,7 @@ import breeze.linalg._
 import org.scalatest.{FlatSpec, Matchers}
 import tumrmp.configuration_space.Robot
 import tumrmp.geometry
-import tumrmp.geometry.{LineSegment, Rectangle}
+import tumrmp.geometry.{LineSegment, Polygon, Rectangle}
 
 class Ex1Suite extends FlatSpec with Matchers {
 
@@ -125,6 +125,45 @@ class Ex1Suite extends FlatSpec with Matchers {
 
   it should "at at no distance from (1,0)" in new TestEnvironment {
     l1 dist DenseVector(1.0, 0.0) should be (0.0 +- 1e-6)
+  }
+
+  trait ConvexityEnvironment {
+    val convexPolygon = new Polygon {
+      override val vertices: List[Vector[Double]] = List(
+        DenseVector(-1.0, 0.0),
+        DenseVector(1.0, 0.0),
+        DenseVector(1.0, 1.0),
+        DenseVector(-1.0, 1.0)
+      )
+    }
+    val concavePolygon = new Polygon {
+      override val vertices: List[Vector[Double]] = List(
+        DenseVector(-1.0, 0.0),
+        DenseVector(0.0, 0.5),
+        DenseVector(1.0, 0.0),
+        DenseVector(1.0, 1.0),
+        DenseVector(-1.0, 1.0)
+      )
+    }
+  }
+
+  "None of the shapes" should "be complex" in new ConvexityEnvironment with TestEnvironment {
+    convexPolygon.complex should be(false)
+    concavePolygon.complex should be(false)
+    rect.complex should be(false)
+  }
+
+  "Convexity" should "be detected on a convex polygon" in new ConvexityEnvironment {
+    println(convexPolygon.complex)
+    convexPolygon.convex should be(true)
+  }
+
+  it should "not be detected on a concave polygon" in new ConvexityEnvironment {
+    concavePolygon.convex should be(false)
+  }
+
+  it should "be detected on a rectangle" in new TestEnvironment {
+    rect.convex should be(true)
   }
 
 }

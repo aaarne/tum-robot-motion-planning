@@ -3,7 +3,7 @@ package tumrmp.configuration_space
 import breeze.linalg._
 import breeze.numerics.{cos, sin}
 import tumrmp.geometry
-import tumrmp.geometry.{LineSegment, Plottable}
+import tumrmp.geometry.{LineSegment, Shape}
 
 
 class Robot(linkLengths: List[Double]) {
@@ -39,7 +39,7 @@ class Robot(linkLengths: List[Double]) {
 
 }
 
-case class RobotState(linkLengths: List[Double], jointAngles: List[Double]) extends Robot(linkLengths) with Plottable {
+case class RobotState(linkLengths: List[Double], jointAngles: List[Double]) extends Robot(linkLengths) with Shape {
   lazy val frames: List[Frame] = frames(jointAngles)
   lazy val points: List[Vector[Double]] = extractPoints(frames)
   lazy val lineSegments: List[LineSegment] = (points zip points.tail) map {

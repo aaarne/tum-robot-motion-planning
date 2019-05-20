@@ -1,9 +1,10 @@
 package tumrmp
 
-import tumrmp.configuration_space.ShowConfigurationSpace
+import tumrmp.visibility_graph.ShowVisibilityGraph
 
 object Debug extends App {
 
-  ShowConfigurationSpace.run()
+  //  ShowConfigurationSpace.run()
 
+  ShowVisibilityGraph.run()
 }
