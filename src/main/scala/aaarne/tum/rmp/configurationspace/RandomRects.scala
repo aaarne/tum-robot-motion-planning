@@ -1,9 +1,9 @@
-package tumrmp.configuration_space
+package aaarne.tum.rmp.configurationspace
 
+import aaarne.tum.rmp.geometry
+import aaarne.tum.rmp.geometry.Rectangle
 import breeze.linalg.DenseVector
 import breeze.stats.distributions._
-import tumrmp.geometry
-import tumrmp.geometry.Rectangle
 
 trait RandomRects {
 

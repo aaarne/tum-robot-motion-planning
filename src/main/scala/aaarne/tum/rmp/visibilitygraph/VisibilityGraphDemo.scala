@@ -1,7 +1,7 @@
-package tumrmp.visibility_graph
+package aaarne.tum.rmp.visibilitygraph
 
+import aaarne.tum.rmp.geometry.{Plotter, Polygon}
 import breeze.plot.Figure
-import tumrmp.geometry.{Plotter, Polygon}
 
 trait VisibilityGraphDemoSettings {
   val verticesPerPolygon = 6

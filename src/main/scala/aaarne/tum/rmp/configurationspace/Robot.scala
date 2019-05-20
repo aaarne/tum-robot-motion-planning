@@ -1,9 +1,8 @@
-package tumrmp.configuration_space
+package aaarne.tum.rmp.configurationspace
 
+import aaarne.tum.rmp.geometry.{LineSegment, Shape}
 import breeze.linalg._
 import breeze.numerics.{cos, sin}
-import tumrmp.geometry
-import tumrmp.geometry.{LineSegment, Shape}
 
 
 class Robot(linkLengths: List[Double]) {
@@ -43,6 +42,6 @@ case class RobotState(linkLengths: List[Double], jointAngles: List[Double]) exte
   lazy val frames: List[Frame] = frames(jointAngles)
   lazy val points: List[Vector[Double]] = extractPoints(frames)
   lazy val lineSegments: List[LineSegment] = (points zip points.tail) map {
-    case (p1, p2) => geometry.LineSegment(p1, p2)
+    case (p1, p2) => LineSegment(p1, p2)
   }
 }

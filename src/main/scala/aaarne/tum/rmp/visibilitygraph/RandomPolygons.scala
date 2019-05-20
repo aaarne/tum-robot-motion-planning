@@ -1,9 +1,9 @@
-package tumrmp.visibility_graph
+package aaarne.tum.rmp.visibilitygraph
 
+import aaarne.tum.rmp.geometry.Polygon
 import breeze.linalg._
 import breeze.numerics._
 import breeze.stats.distributions.Uniform
-import tumrmp.geometry.Polygon
 
 trait PolygonSamplingSettings {
   val positionSampling = Uniform(-5, 5)

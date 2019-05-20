@@ -17,5 +17,5 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
-mainClass in (Compile, packageBin) := Some("tumrmp.Main")
-mainClass in (Compile, run) := Some("tumrmp.Main")
+mainClass in (Compile, packageBin) := Some("aaarne.tum.rmp.Main")
+mainClass in (Compile, run) := Some("aaarne.tum.rmp.Main")

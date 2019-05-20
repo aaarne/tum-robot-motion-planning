@@ -1,8 +1,8 @@
-package tumrmp
+package aaarne.tum.rmp
 
-import tumrmp.configuration_space.ShowConfigurationSpace
-import tumrmp.visibility_graph.ShowVisibilityGraph
-import tumrmp.voronoi.ShowVoronoiDiagram
+import aaarne.tum.rmp.configurationspace.ShowConfigurationSpace
+import aaarne.tum.rmp.visibilitygraph.ShowVisibilityGraph
+import aaarne.tum.rmp.voronoi.ShowVoronoiDiagram
 
 
 object Main extends App {

@@ -1,4 +1,4 @@
-package tumrmp.voronoi
+package aaarne.tum.rmp.voronoi
 
 class VoronoiDiagram {
 

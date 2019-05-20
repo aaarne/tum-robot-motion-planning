@@ -1,6 +1,6 @@
-package tumrmp.configuration_space
+package aaarne.tum.rmp.configurationspace
 
-import tumrmp.geometry.Rectangle
+import aaarne.tum.rmp.geometry.Rectangle
 
 trait CollisionChecker {
 

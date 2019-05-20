@@ -1,6 +1,6 @@
-package tumrmp.visibility_graph
+package aaarne.tum.rmp.visibilitygraph
 
-import tumrmp.geometry.{LineSegment, Polygon}
+import aaarne.tum.rmp.geometry.{LineSegment, Polygon}
 
 trait VisibilityGraph {
 

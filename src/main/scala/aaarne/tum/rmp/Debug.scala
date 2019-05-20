@@ -1,6 +1,6 @@
-package tumrmp
+package aaarne.tum.rmp
 
-import tumrmp.visibility_graph.ShowVisibilityGraph
+import aaarne.tum.rmp.visibilitygraph.ShowVisibilityGraph
 
 object Debug extends App {
 

@@ -1,4 +1,4 @@
-package tumrmp.geometry
+package aaarne.tum.rmp.geometry
 
 import breeze.plot.Series
 

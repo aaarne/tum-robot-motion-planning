@@ -1,4 +1,4 @@
-package tumrmp.geometry
+package aaarne.tum.rmp.geometry
 
 import breeze.linalg._
 import breeze.numerics.{abs, atan2, round}

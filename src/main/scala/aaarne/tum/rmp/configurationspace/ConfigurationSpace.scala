@@ -1,9 +1,9 @@
-package tumrmp.configuration_space
+package aaarne.tum.rmp.configurationspace
 
+import aaarne.tum.rmp.geometry.{Plotter, Rectangle}
 import breeze.linalg._
 import breeze.numerics.toRadians
 import breeze.plot.{Figure, Plot, image}
-import tumrmp.geometry.{Plotter, Rectangle}
 
 class ConfigurationSpace extends CollisionChecker with RandomRects {
 

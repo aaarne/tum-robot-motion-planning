@@ -1,10 +1,10 @@
 package ex1
 
+import aaarne.tum.rmp.configurationspace.Robot
+import aaarne.tum.rmp.geometry
+import aaarne.tum.rmp.geometry.{LineSegment, Polygon, Rectangle}
 import breeze.linalg._
 import org.scalatest.{FlatSpec, Matchers}
-import tumrmp.configuration_space.Robot
-import tumrmp.geometry
-import tumrmp.geometry.{LineSegment, Polygon, Rectangle}
 
 class Ex1Suite extends FlatSpec with Matchers {
 
@@ -20,7 +20,7 @@ class Ex1Suite extends FlatSpec with Matchers {
     val rect = Rectangle(DenseVector(0.0, 0.0), 1.0, 1.0)
 
     val l1 = LineSegment(DenseVector(-1.0, 0), DenseVector(1.0, 0.0))
-    val l2 = geometry.LineSegment(DenseVector(0, -1.0), DenseVector(0.0, 1.0))
+    val l2 = LineSegment(DenseVector(0, -1.0), DenseVector(0.0, 1.0))
     val l3 = geometry.LineSegment(DenseVector(2.0, 0.0), DenseVector(0.0, 2.0))
   }
 
