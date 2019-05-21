@@ -1,9 +1,14 @@
 package aaarne.tum.rmp.voronoi
 
-class VoronoiDiagram {
+import breeze.linalg._
+
+trait VoronoiDiagram {
+
+  val map: DenseMatrix[Boolean]
+
+  lazy val voronoi: Matrix[Double] = Matrix.tabulate(map.rows, map.cols) {
+    case (i, j) => 0.0
+  }
 
 }
 
-object ShowVoronoiDiagram extends VoronoiDiagram with Runnable {
-  override def run(): Unit = ???
-}

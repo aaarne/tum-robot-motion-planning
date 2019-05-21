@@ -32,10 +32,10 @@ object ShowVisibilityGraph extends VisibilityGraphDemo
     val f = Figure("Random Polygon")
 
     f subplot 0 ++= convexPolygons.zipWithIndex map {
-      case (poly, i) => plot(poly, "green", s"Convex Polygon ${i + 1}")
+      case (poly, i) => plot("green", s"Convex Polygon ${i + 1}")(poly)
     }
     f subplot 0 ++= concavePolygons.zipWithIndex map {
-      case (poly, i) => plot(poly, "blue", s"Concave Polygon ${i + 1}")
+      case (poly, i) => plot("blue", s"Concave Polygon ${i + 1}")(poly)
     }
     f subplot 0 ++= plotLineSegments(visibilityGraph, "red")
 

@@ -20,9 +20,9 @@ object ShowConfigurationSpace extends ConfigurationSpaceDemo with Plotter with R
   override def run(): Unit = {
     val f = Figure("Robot Visualizer")
 
-    f subplot 0 += plot(robot moveTo List(.25 * math.Pi, 0.25 * math.Pi), "blue", "Robot")
+    f subplot 0 += plot("blue", "Robot")(robot moveTo List(.25 * math.Pi, 0.25 * math.Pi))
     f subplot 0 ++= rects.zipWithIndex map {
-      case (shape, i) => plot(shape, "red", s"Obstacle $i")
+      case (shape, i) => plot("red", s"Obstacle $i")(shape)
     }
 
     f.subplot(0).legend = true

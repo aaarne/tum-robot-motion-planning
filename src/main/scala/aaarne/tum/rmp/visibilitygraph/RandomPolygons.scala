@@ -3,14 +3,12 @@ package aaarne.tum.rmp.visibilitygraph
 import aaarne.tum.rmp.geometry.Polygon
 import breeze.linalg._
 import breeze.numerics._
-import breeze.stats.distributions.Uniform
+import breeze.stats.distributions._
 
-trait PolygonSamplingSettings {
+
+trait RandomPolygons {
   val positionSampling = Uniform(-5, 5)
   val radiusSampling = Uniform(0, 1)
-}
-
-trait RandomPolygons extends PolygonSamplingSettings {
 
   def sample(nVertices: Int): Polygon = {
     val uniform = Uniform(0, 1)
@@ -34,5 +32,11 @@ trait RandomPolygons extends PolygonSamplingSettings {
 
   def sampleConcavePolygons(n: Int, nVertices: Int): List[Polygon] =
     (Stream.continually(sample(nVertices)) filterNot (_.convex) take n).toList
+
+  def sampleArbitraryPolygons(n: Int, maxVertices: Int = 10): List[Polygon] = {
+    val nVertexSampler = Rand.randInt(maxVertices + 1)
+
+    (Stream.continually(sample(nVertexSampler.sample)) take n).toList
+  }
 
 }

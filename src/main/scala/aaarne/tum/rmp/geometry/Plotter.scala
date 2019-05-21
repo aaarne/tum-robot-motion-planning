@@ -4,7 +4,7 @@ import breeze.plot.Series
 
 trait Plotter {
 
-  def plot(shape: Shape, color: String, name: String): Series =
+  def plot(color: String, name: String = "")(shape: Shape): Series =
     plotClosedShape(shape.lineSegments, color, name)
 
   private def plotClosedShape(ls: List[LineSegment], color: String, name: String): Series = {
