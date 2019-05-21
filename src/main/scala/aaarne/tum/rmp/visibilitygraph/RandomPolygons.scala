@@ -34,7 +34,7 @@ trait RandomPolygons {
     (Stream.continually(sample(nVertices)) filterNot (_.convex) take n).toList
 
   def sampleArbitraryPolygons(n: Int, maxVertices: Int = 10): List[Polygon] = {
-    val nVertexSampler = Rand.randInt(maxVertices + 1)
+    val nVertexSampler = Rand.randInt(3, maxVertices + 1)
 
     (Stream.continually(sample(nVertexSampler.sample)) take n).toList
   }

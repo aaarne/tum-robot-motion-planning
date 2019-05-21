@@ -16,13 +16,16 @@ object Main extends App {
       | 1.3 Voronoi Diagram
     """.stripMargin)
 
-  continually(scala.io.StdIn.readLine("Select exercise: ")) foreach {
-    case "1.1" => ShowConfigurationSpace.run()
-    case "1.2" => ShowVisibilityGraph.run()
-    case "1.3" => ShowVoronoiDiagramDemo.run()
+  val exercises: Map[String, Runnable] = Map(
+    "1.1" -> ShowConfigurationSpace,
+    "1.2" -> ShowVisibilityGraph,
+    "1.3" -> ShowVoronoiDiagramDemo,
+  )
 
-    case _ => sys.exit()
+  continually(scala.io.StdIn.readLine("Select exercise: ")) map exercises.get forall {
+    case Some(ex) => ex.run(); true
+    case None => false
   }
 
-
+  println("Bye")
 }

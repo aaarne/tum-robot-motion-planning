@@ -3,11 +3,11 @@ package aaarne.tum.rmp.voronoi
 import aaarne.tum.rmp.geometry.{Plotter, Rectangle}
 import aaarne.tum.rmp.visibilitygraph.RandomPolygons
 import breeze.linalg._
-import breeze.plot.{Figure, image}
+import breeze.plot.{Figure, PaintScale, image}
 import breeze.stats.distributions.Uniform
 
 trait VoronoiDiagramDemoSettings {
-  val nPolygons = 3
+  val nPolygons = 2
 
   val mapSize = ((-1.0, 1.0), (-1.0, 1.0))
   val resolution = 500
@@ -43,7 +43,11 @@ object ShowVoronoiDiagramDemo extends VoronoiDiagramDemo with Plotter with Runna
     val f2 = Figure("Discretized")
     f2 subplot 0 += image((map map (if (_) 1.0 else 0.0)).t)
 
+    val f3 = Figure("Voronoi Diagram")
+    f3 subplot 0 += image(-1.0 * voronoi.t, scale = Utils.createColorcode(-1.0 * voronoi, PaintScale.Heat))
+
     f.refresh()
     f2.refresh()
+    f3.refresh()
   }
 }
