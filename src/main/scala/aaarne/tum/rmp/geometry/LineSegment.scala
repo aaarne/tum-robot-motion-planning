@@ -20,7 +20,7 @@ case class LineSegment(p1: Vector[Double], p2: Vector[Double]) {
     case _ => false
   }
 
-  def dist(p: Vector[Double]): Double = {
+  def projection(p: Vector[Double]): Vector[Double] = {
     val d = p2 - p1
 
     val u = sum((p - p1) *:* d) / sum(d *:* d) match {
@@ -28,8 +28,9 @@ case class LineSegment(p1: Vector[Double], p2: Vector[Double]) {
       case x if x < 0 => 0.0
       case x => x
     }
-
-    norm((p1 + u * d) - p)
+    p1 + u * d
   }
+
+  def dist(p: Vector[Double]): Double = norm(projection(p) - p)
 
 }

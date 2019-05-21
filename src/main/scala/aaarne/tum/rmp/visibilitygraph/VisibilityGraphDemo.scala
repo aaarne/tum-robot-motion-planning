@@ -9,16 +9,20 @@ trait VisibilityGraphDemoSettings {
   val nConcavePolygons = 3
 }
 
-class VisibilityGraphDemo extends RandomPolygons with VisibilityGraph with VisibilityGraphDemoSettings {
+class VisibilityGraphDemo extends RandomPolygons
+  with VisibilityGraph
+  with VisibilityGraphDemoSettings {
   val convexPolygons = sampleConvexPolygons(nConvexPolygons, verticesPerPolygon)
   val concavePolygons = sampleConcavePolygons(nConcavePolygons, verticesPerPolygon)
 
   override val polygons: List[Polygon] = convexPolygons ++ concavePolygons
 }
 
-object ShowVisibilityGraph extends VisibilityGraphDemo with Runnable with Plotter {
-  override def run(): Unit = {
+object ShowVisibilityGraph extends VisibilityGraphDemo
+  with Runnable
+  with Plotter {
 
+  override def run(): Unit = {
     println(
       s"""There are ${convexPolygons.size} convex and ${concavePolygons.size} polygons with $verticesPerPolygon vertices each.
          |In total there are ${(0 /: polygons) (_ + _.size)} vertices.

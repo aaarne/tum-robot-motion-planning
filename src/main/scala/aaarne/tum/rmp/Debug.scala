@@ -1,10 +1,8 @@
 package aaarne.tum.rmp
 
-import aaarne.tum.rmp.visibilitygraph.ShowVisibilityGraph
+import aaarne.tum.rmp.configurationspace.ShowConfigurationSpace
 
 object Debug extends App {
 
-  //  ShowConfigurationSpace.run()
-
-  ShowVisibilityGraph.run()
+    ShowConfigurationSpace.run()
 }

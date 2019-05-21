@@ -9,7 +9,6 @@ trait ConvexityCheck {
 
     val v1 = vertices(vertices.size - 2)
     val v2 = vertices.last
-    val initialDirection = atan2(v2(1) - v1(1), v2(0) - v1(0))
 
     type AngleTraverseAccumulator = (Double, Vector[Double], List[Double]) // direction, previous vertex, angles
 
