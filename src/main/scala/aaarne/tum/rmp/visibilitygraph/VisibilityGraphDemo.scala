@@ -15,7 +15,7 @@ class VisibilityGraphDemo extends RandomPolygons
   val convexPolygons = sampleConvexPolygons(nConvexPolygons, verticesPerPolygon)
   val concavePolygons = sampleConcavePolygons(nConcavePolygons, verticesPerPolygon)
 
-  override val polygons: List[Polygon] = convexPolygons ++ concavePolygons
+  override val polygons: List[Polygon] = removeCollidingPolygons(convexPolygons ++ concavePolygons)
 }
 
 object ShowVisibilityGraph extends VisibilityGraphDemo
@@ -24,20 +24,18 @@ object ShowVisibilityGraph extends VisibilityGraphDemo
 
   override def run(): Unit = {
     println(
-      s"""There are ${convexPolygons.size} convex and ${concavePolygons.size} polygons with $verticesPerPolygon vertices each.
+      s"""There are ${polygons.size} polygons with $verticesPerPolygon vertices each.
          |In total there are ${(0 /: polygons) (_ + _.size)} vertices.
          |The visibility graph consists of ${visibilityGraph.size} edges.
+         |Convex polygons are shown in green, concave polygons in red and the visibility graph in gray.
        """.stripMargin)
 
     val f = Figure("Random Polygon")
 
-    f subplot 0 ++= convexPolygons.zipWithIndex map {
-      case (poly, i) => plot("green", s"Convex Polygon ${i + 1}")(poly)
+    f subplot 0 ++= polygons map { p =>
+      plot(if (p.convex) "g" else "r")(p)
     }
-    f subplot 0 ++= concavePolygons.zipWithIndex map {
-      case (poly, i) => plot("blue", s"Concave Polygon ${i + 1}")(poly)
-    }
-    f subplot 0 ++= plotLineSegments(visibilityGraph, "red")
+    f subplot 0 ++= plotLineSegments(visibilityGraph, "180,180,180")
 
     f.refresh()
   }

@@ -39,4 +39,16 @@ trait RandomPolygons {
     (Stream.continually(sample(nVertexSampler.sample)) take n).toList
   }
 
+  def removeCollidingPolygons(polys: List[Polygon]): List[Polygon] = {
+
+    def loop(in: List[Polygon], acc: List[Polygon]): List[Polygon] = in match {
+      case Nil => acc
+      case poly :: rest => 
+        if (acc exists (other => poly collidesWith other)) loop(rest, acc)
+        else loop(rest, poly :: acc)
+    }
+
+    loop(polys, Nil)
+  }
+
 }

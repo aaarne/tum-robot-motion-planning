@@ -8,17 +8,24 @@ trait VisibilityGraph {
 
   val polygons: List[Polygon]
 
+  def checkEdge(edge: Edge): Boolean = !(polygons exists (_.doesLineCollide(edge)))
+
   /**
-    * This is just incredibly declarative :)
-    */
-  lazy val visibilityGraph: List[Edge] =
+   * Generate each pair of polygons once, such that the polygon with more vertices is first
+   */
+  private def polygonPairs: List[(Polygon, Polygon)] =
     for {
       (poly1, i) <- polygons.zipWithIndex
       (poly2, j) <- polygons.zipWithIndex
-      if (poly1.size > poly2.size) || (poly1.size == poly2.size && j > i)
-      (v1, k) <- poly1.vertices.zipWithIndex
-      (v2, l) <- poly2.vertices.zipWithIndex if l > k
-      if !(polygons exists (_.doesLineCollide(LineSegment(v1, v2))))
-    } yield LineSegment(v1, v2)
+      if i < j
+    } yield if (poly1.size >= poly2.size) (poly1, poly2) else (poly2, poly1)
 
+  lazy val visibilityGraph: List[Edge] = 
+    for {
+      (p1, p2) <- polygonPairs
+      (v1, i) <- p1.vertices.zipWithIndex
+      (v2, j) <- p2.vertices.zipWithIndex
+      e = LineSegment(v1, v2)
+      if checkEdge(e)
+    } yield e
 }

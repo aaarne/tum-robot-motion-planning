@@ -7,14 +7,14 @@ trait Shape {
   def lineSegments: List[LineSegment]
 
   def doesLineCollide(l: LineSegment): Boolean =
-    lineSegments exists (l2 => l.intersects(l2, allow_terminal_intersection = true))
+    lineSegments exists l.intersects
 
   def dist(p: Vector[Double]): Double =
     (lineSegments map (l => l dist p)).min
 
   lazy val complex: Boolean =
     lineSegments exists { l =>
-      lineSegments.filterNot(l2 => l == l2) exists (l2 => l.intersects(l2, allow_terminal_intersection = true))
+      lineSegments filterNot (l2 => l == l2) exists l.intersects
     }
 }
 
@@ -46,6 +46,8 @@ trait Polygon extends Shape with ConvexityCheck {
 
     (false /: lineSegments)(f)
   }
+
+  def collidesWith(other: Polygon): Boolean = lineSegments exists other.doesLineCollide
 
   lazy val convex: Boolean = !complex && isConvex(vertices)
 }

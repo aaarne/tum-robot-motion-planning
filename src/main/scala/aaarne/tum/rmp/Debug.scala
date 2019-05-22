@@ -1,8 +1,8 @@
 package aaarne.tum.rmp
 
-import aaarne.tum.rmp.voronoi.ShowVoronoiDiagramDemo
+import aaarne.tum.rmp.visibilitygraph.ShowVisibilityGraph
 
 object Debug extends App {
 
-    ShowVoronoiDiagramDemo.run()
+    ShowVisibilityGraph.run()
 }
