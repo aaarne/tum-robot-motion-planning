@@ -14,14 +14,11 @@ trait VisibilityGraph {
   lazy val visibilityGraph: List[Edge] =
     for {
       (poly1, i) <- polygons.zipWithIndex
-      (poly2, j) <- polygons.zipWithIndex if j > i
-      (larger, smaller) = if (poly1.size >= poly2.size) (poly1, poly2) else (poly2, poly1)
-
-      (v1, k) <- smaller.vertices.zipWithIndex
-      (v2, l) <- larger.vertices.zipWithIndex if l > k
-
-      ls = LineSegment(v1, v2)
-      if !(polygons exists (p => p.doesLineCollide(ls)))
-    } yield ls
+      (poly2, j) <- polygons.zipWithIndex
+      if (poly1.size > poly2.size) || (poly1.size == poly2.size && j > i)
+      (v1, k) <- poly1.vertices.zipWithIndex
+      (v2, l) <- poly2.vertices.zipWithIndex if l > k
+      if !(polygons exists (_.doesLineCollide(LineSegment(v1, v2))))
+    } yield LineSegment(v1, v2)
 
 }
