@@ -1,10 +1,10 @@
 scalaVersion := "2.12.8"
 
-name := "tum-rmp"
-organization := "de.tum.in"
+name := "rmp"
+organization := "aaarne.tum"
 version := "1.0"
 
-libraryDependencies += "org.typelevel" %% "cats-core" % "1.6.0"
+enablePlugins(JavaAppPackaging)
 
 val breezeVersion = "0.13.2"
 
@@ -17,5 +17,5 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
-mainClass in (Compile, packageBin) := Some("aaarne.tum.rmp.Main")
-mainClass in (Compile, run) := Some("aaarne.tum.rmp.Main")
+mainClass in Compile := Some("aaarne.tum.rmp.Main")
+
