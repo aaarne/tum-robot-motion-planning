@@ -18,12 +18,11 @@ class ConfigurationSpaceSuite extends FlatSpec with Matchers {
   }
 
   "The first frame" should "always be an identity matrix" in new TestEnvironment {
-    val frames = simpleRobot frames upright
-    frames.head should be(DenseMatrix.eye[Double](3))
+    (simpleRobot moveTo upright).frames.head should be(DenseMatrix.eye[Double](3))
   }
 
   "The upright position" should "be two meters high" in new TestEnvironment {
-    val frames = simpleRobot frames upright
+    val frames = (simpleRobot moveTo upright).frames
     val expected = Matrix(
       (0.0, -1.0, 0.0),
       (1.0, 0.0, 2.0),
@@ -35,8 +34,9 @@ class ConfigurationSpaceSuite extends FlatSpec with Matchers {
   }
 
   "The lying position" should "have no y component" in new TestEnvironment {
-    val frames = simpleRobot frames lying
-    val points = simpleRobot points lying
+    val state = simpleRobot moveTo lying
+    val frames = state.frames
+    val points = state.points
 
     frames(2)(0, 2) should be(2.0 +- 1e-6)
     frames(2)(1, 2) should be(0.0 +- 1e-6)
@@ -45,12 +45,12 @@ class ConfigurationSpaceSuite extends FlatSpec with Matchers {
   }
 
   "The long robot" should "be at identity as well when wrapped" in new TestEnvironment {
-    val frames = longRobot frames wrapped
+    val state = longRobot moveTo wrapped
+
     val expected: Matrix[Double] = DenseMatrix.eye[Double](3)
+    val diff = sum(state.frames.last - expected)
 
-    val diff = sum(frames.last - expected)
     diff should be(0.0 +- 1e-6)
-
   }
 
   it should "be at (2, 2) for the zigzag pose" in new TestEnvironment {
@@ -58,5 +58,4 @@ class ConfigurationSpaceSuite extends FlatSpec with Matchers {
     val diff = sum(lastpoint - Vector(2.0, 2.0))
     diff should be(0.0 +- 1e-6)
   }
-
 }
