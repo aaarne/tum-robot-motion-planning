@@ -22,9 +22,7 @@ trait RandomPolygons {
     def createVertex(angle: Double): Vector[Double] =
       origin + DenseVector(cos(angle + orientation), sin(angle + orientation)) * radiusSampling.sample()
 
-    new Polygon {
-      override val vertices: List[Vector[Double]] = (angles.valuesIterator map createVertex).toList
-    }
+    Polygon((angles.valuesIterator map createVertex).toList)
   }
 
   def sampleConvexPolygons(n: Int, nVertices: Int): List[Polygon] =
@@ -34,18 +32,17 @@ trait RandomPolygons {
     (Stream.continually(sample(nVertices)) filterNot (_.convex) take n).toList
 
   def sampleArbitraryPolygons(n: Int, maxVertices: Int = 10): List[Polygon] = {
-    val nVertexSampler = Rand.randInt(3, maxVertices + 1)
-
-    (Stream.continually(sample(nVertexSampler.sample)) take n).toList
+    val rnd = Rand.randInt(3, maxVertices + 1)
+    val polys = Stream.continually(rnd.sample) map sample take n
+    polys.toList
   }
 
   def removeCollidingPolygons(polys: List[Polygon]): List[Polygon] = {
 
     def loop(in: List[Polygon], acc: List[Polygon]): List[Polygon] = in match {
       case Nil => acc
-      case poly :: rest => 
-        if (acc exists (other => poly collidesWith other)) loop(rest, acc)
-        else loop(rest, poly :: acc)
+      case poly :: rest if acc exists poly.collidesWith => loop(rest, acc)
+      case poly :: rest => loop(rest, poly :: acc)
     }
 
     loop(polys, Nil)

@@ -50,6 +50,16 @@ trait Polygon extends Shape with ConvexityCheck {
   def collidesWith(other: Polygon): Boolean = lineSegments exists other.doesLineCollide
 
   lazy val convex: Boolean = !complex && isConvex(vertices)
+
+}
+
+object Polygon {
+  def apply(v: List[Vector[Double]]): Polygon = {
+    new Polygon {
+      override val vertices: List[Vector[Double]] = v
+    }
+  }
+  def unapply(arg: Polygon): Option[List[Vector[Double]]] = Some(arg.vertices)
 }
 
 case class Rectangle(center: Vector[Double], width: Double, height: Double) extends Polygon {
@@ -69,5 +79,5 @@ case class Rectangle(center: Vector[Double], width: Double, height: Double) exte
       case (i, w) => point(i) >= center(i) - 0.5 * w && point(i) <= center(i) + 0.5 * w
     }
   }
-
 }
+

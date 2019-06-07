@@ -19,3 +19,4 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
 mainClass in Compile := Some("aaarne.tum.rmp.Main")
 
+scalacOptions in ThisBuild ++= Seq("-language:implicitConversions", "-feature")
