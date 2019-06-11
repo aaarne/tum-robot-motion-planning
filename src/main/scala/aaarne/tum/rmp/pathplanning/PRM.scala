@@ -25,7 +25,7 @@ trait PRM extends PathPlanner {
         val ls = LineSegment(v, vertex)
         obstacles forall (o => !o.lineCollides(ls))
     }.flatMap {
-      case (v, i) => List(i -> newIndex, newIndex -> i)
+      case (_, i) => List(i -> newIndex, newIndex -> i)
     }
 
     Graph(graph.vertices :+ vertex, graph.edges ++ newEdges)
@@ -44,17 +44,19 @@ trait PRM extends PathPlanner {
 
     val directConnection = LineSegment(start, destination)
 
-    if (obstacles forall (o => !o.lineCollides(directConnection))) Some(List(start, destination))
-    else {
+    if (obstacles forall (o => !o.lineCollides(directConnection)))
+      Some(List(start, destination))
+    else
       bfs(graph.toVertexListFormat, i_start, i_dest) map (_ map graph.vertices)
-    }
   }
 
 }
 
-object PRMDemo extends PathPlanningEvaluation with PRM {
+object PRMDemo extends PathPlannerDemo with PRM {
 
   override def plotGraph(f: Plot, verbose: Boolean): Unit = {
+
+    println(s"Using $nVertices non-colliding points to construct the PRM")
 
     checkConnectivity(prm.toVertexListFormat) match {
       case 0 => println("The probabilistic roadmap is connected :)")

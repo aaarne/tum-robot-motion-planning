@@ -3,13 +3,23 @@ package aaarne.tum.rmp.pathplanning
 import breeze.linalg._
 import breeze.numerics.abs
 
+import scala.annotation.tailrec
+
 object Graphs {
 
+  /**
+    * Perform breadth first search
+    *
+    * @param g     a graph in map from Vertex to List[Vertex] format
+    * @param start start node
+    * @param goal  end node
+    * @return Shortest path solution if there is one, None otherwise
+    */
   def bfs[Vertex](g: Map[Vertex, List[Vertex]], start: Vertex, goal: Vertex): Option[List[Vertex]] = {
 
     def extractPath(state: Vertex, transitions: Map[Vertex, Vertex]): List[Vertex] = {
 
-      def loop(state: Vertex, path: List[Vertex]): List[Vertex] =
+      @tailrec def loop(state: Vertex, path: List[Vertex]): List[Vertex] =
         if (state == start) path.reverse :+ goal
         else loop(transitions(state), path :+ transitions(state))
 
@@ -17,7 +27,7 @@ object Graphs {
     }
 
 
-    def bfsrec(frontier: List[Vertex], explored: List[Vertex], transitions: Map[Vertex, Vertex]): Option[List[Vertex]] =
+    @tailrec def bfsrec(frontier: List[Vertex], explored: List[Vertex], transitions: Map[Vertex, Vertex]): Option[List[Vertex]] =
       frontier match {
         case Nil => None
         case head :: tail if head == goal => Some(extractPath(goal, transitions))
@@ -29,7 +39,15 @@ object Graphs {
     bfsrec(start :: Nil, Nil, Map.empty)
   }
 
-  def checkConnectivity[Vertex](g: Map[Vertex, List[Vertex]]): Int = {
+  /**
+    * Compute number of connected components in the graph
+    *
+    * @param g the graph in map from Vertex to List[Vertex] format
+    * @return Number of connected components - 1
+    *         (i.e. a return value of 0 indices a completely connected graph, such that
+    *         for every pair of nodes a path exists)
+    */
+  def checkConnectivity(g: Map[_, List[_]]): Int = {
     val n = g.size
     val laplacian: DenseMatrix[Double] = DenseMatrix.zeros(n, n)
 
