@@ -31,10 +31,9 @@ trait RandomPolygons {
   def sampleConcavePolygons(n: Int, nVertices: Int): List[Polygon] =
     (Stream.continually(sample(nVertices)) filterNot (_.convex) take n).toList
 
-  def sampleArbitraryPolygons(n: Int, maxVertices: Int = 10): List[Polygon] = {
+  def samplesArbitraryPolygon(maxVertices: Int = 10): Polygon = {
     val rnd = Rand.randInt(3, maxVertices + 1)
-    val polys = Stream.continually(rnd.sample) map sample take n
-    polys.toList
+    sample(rnd.sample())
   }
 
   def removeCollidingPolygons(polys: List[Polygon]): List[Polygon] = {

@@ -1,8 +1,8 @@
 package aaarne.tum.rmp.configurationspace
 
-import aaarne.tum.rmp.geometry.{Plotter, Rectangle}
-import breeze.plot.{Figure, Plot, image}
+import aaarne.tum.rmp.geometry.{Plotter, Polygon}
 import breeze.linalg._
+import breeze.plot.{Figure, Plot, image}
 
 trait ConfigurationSpaceDemoSettings {
   val robotLinkLengths = List(.7, .7)
@@ -11,17 +11,17 @@ trait ConfigurationSpaceDemoSettings {
 
 trait ConfigurationSpaceDemo extends ConfigurationSpace with RandomRects with ConfigurationSpaceDemoSettings {
 
-  override val rects: List[Rectangle] = createRandomRects(amountOfObstacles).toList
+  override val obstacles: List[Polygon] = createRandomRects(amountOfObstacles).toList
   override val robot = new Robot(robotLinkLengths)
 }
 
-object ShowConfigurationSpace extends ConfigurationSpaceDemo with Plotter with Runnable {
+object ShowConfigurationSpace extends ConfigurationSpaceDemo with Runnable with Plotter {
 
-  override def run(): Unit = {
+  def plotConfspace(): Unit = {
     val f = Figure("Robot Visualizer")
 
     f subplot 0 += plot("blue", "Robot")(robot moveTo List(.25 * math.Pi, 0.25 * math.Pi))
-    f subplot 0 ++= rects.zipWithIndex map {
+    f subplot 0 ++= obstacles.zipWithIndex map {
       case (shape, i) => plot("red", s"Obstacle $i")(shape)
     }
 
@@ -40,4 +40,5 @@ object ShowConfigurationSpace extends ConfigurationSpaceDemo with Plotter with R
 
   }
 
+  override def run(): Unit = plotConfspace()
 }

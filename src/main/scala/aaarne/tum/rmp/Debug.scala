@@ -1,9 +1,9 @@
 package aaarne.tum.rmp
 
-import aaarne.tum.rmp.visibilitygraph.ShowVisibilityGraph
+import aaarne.tum.rmp.pathplanning.PRMDemo
 
 object Debug extends App {
 
-    ShowVisibilityGraph.run()
+  PRMDemo.run()
 
 }

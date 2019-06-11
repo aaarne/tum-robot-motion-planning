@@ -16,11 +16,11 @@ class GeometrySuite extends FlatSpec with Matchers {
   }
 
   it should "collide with line from (-1,-1) to (1, 1)" in new TestEnvironment {
-    rect doesLineCollide LineSegment(DenseVector(-1.0, -1.0), DenseVector(1.0, 1.0))
+    rect lineCollides LineSegment(DenseVector(-1.0, -1.0), DenseVector(1.0, 1.0))
   }
 
   it should "not collide with line from (-1, -1) to (-2, -2)" in new TestEnvironment {
-    rect doesLineCollide LineSegment(DenseVector(-1.0, -1.0), DenseVector(-2.0, -2.0))
+    rect lineCollides LineSegment(DenseVector(-1.0, -1.0), DenseVector(-2.0, -2.0))
   }
 
   it should "not be complex" in new TestEnvironment {

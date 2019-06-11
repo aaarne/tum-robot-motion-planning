@@ -8,7 +8,7 @@ trait VisibilityGraph {
 
   val polygons: List[Polygon]
 
-  def checkEdge(edge: Edge): Boolean = !(polygons exists (_.doesLineCollide(edge)))
+  def checkEdge(edge: Edge): Boolean = !(polygons exists (_.lineCollides(edge)))
 
   /**
     * Generate each pair of polygons once, such that the polygon with more vertices is first
@@ -28,4 +28,6 @@ trait VisibilityGraph {
       e = LineSegment(v1, v2)
       if checkEdge(e)
     } yield e
+
+
 }

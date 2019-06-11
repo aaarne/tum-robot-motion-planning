@@ -20,7 +20,7 @@ trait VoronoiDiagramDemo extends VoronoiDiagram with RandomPolygons with Voronoi
   override val positionSampling = Uniform(mapSize._1._1, mapSize._1._2)
   override val radiusSampling = Uniform(0.1, maxRadius)
 
-  val polygons = sampleArbitraryPolygons(nPolygons)
+  val polygons = Stream.continually(samplesArbitraryPolygon(10)) take nPolygons
 
   val x = linspace(mapSize._1._1, mapSize._1._2, resolution)
   val y = linspace(mapSize._2._1, mapSize._2._2, resolution)
