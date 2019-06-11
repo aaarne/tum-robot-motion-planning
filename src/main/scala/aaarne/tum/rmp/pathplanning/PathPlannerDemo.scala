@@ -13,15 +13,17 @@ trait PathPlannerDemo extends PathPlanner with Plotter with Runnable with Random
   override val positionSampling: Uniform = Uniform(-8, 8)
   override val radiusSampling: Uniform = Uniform(1, 3)
 
+  val title = "Path Planning Map"
+
   override val obstacles: List[Polygon] =
     removeCollidingPolygons(Stream.continually(samplesArbitraryPolygon()).take(20).toList)
 
 
-  def plotGraph(f: Plot, verbose: Boolean = false): Unit
+  def plotGraph(f: Plot, verbose: Boolean = false): Unit = {}
 
 
   override def run(): Unit = {
-    val f = Figure("Path Planning Map")
+    val f = Figure(title)
 
     f subplot 0 ++= obstacles map plot(color = "red")
 

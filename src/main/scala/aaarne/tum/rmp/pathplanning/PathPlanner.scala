@@ -2,9 +2,12 @@ package aaarne.tum.rmp.pathplanning
 
 import aaarne.tum.rmp.geometry.Polygon
 import breeze.linalg._
+import breeze.numerics.sqrt
 import breeze.stats.distributions.Uniform
 
-case class Point(x: Double, y: Double)
+case class Point(x: Double, y: Double) {
+  def dist(other: Point): Double = sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y))
+}
 
 trait PathPlanner {
 
@@ -17,14 +20,15 @@ trait PathPlanner {
   val obstacles: List[Polygon]
   type Path = List[Point]
 
-  def sampleFreePoint: Point = {
-    val xSampler = Uniform(xdim._1, xdim._2)
-    val ySampler = Uniform(ydim._1, ydim._2)
+  val xSampler = Uniform(xdim._1, xdim._2)
+  val ySampler = Uniform(ydim._1, ydim._2)
 
-    Stream.continually(Point(xSampler.sample(), ySampler.sample())).filter {
+  def samplePoint: Point = Point(xSampler.sample(), ySampler.sample())
+
+  def sampleFreePoint: Point =
+    Stream.continually(samplePoint).filter {
       p => obstacles forall (o => !o.contains(p))
     }.head
-  }
 
   def plan(start: Point, destination: Point): Option[Path]
 }

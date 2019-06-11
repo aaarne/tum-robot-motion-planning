@@ -54,6 +54,8 @@ trait PRM extends PathPlanner {
 
 object PRMDemo extends PathPlannerDemo with PRM {
 
+  override val title = "RPM Pathplanning"
+
   override def plotGraph(f: Plot, verbose: Boolean): Unit = {
 
     println(s"Using $nVertices non-colliding points to construct the PRM")

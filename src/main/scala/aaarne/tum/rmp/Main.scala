@@ -1,7 +1,7 @@
 package aaarne.tum.rmp
 
 import aaarne.tum.rmp.configurationspace.ShowConfigurationSpace
-import aaarne.tum.rmp.pathplanning.PRMDemo
+import aaarne.tum.rmp.pathplanning.{PRMDemo, RRTDemo}
 import aaarne.tum.rmp.visibilitygraph.ShowVisibilityGraph
 import aaarne.tum.rmp.voronoi.ShowVoronoiDiagramDemo
 
@@ -18,6 +18,7 @@ object Main extends App {
       |
       |2. Homework 2:
       | 2.1 Probabilistic Roadmap (PRM)
+      | 2.2 Rapidly Exploring Random Tree (RRT) (single tree mode)
     """.stripMargin)
 
   val exercises: Map[String, Runnable] = Map(
@@ -25,6 +26,7 @@ object Main extends App {
     "1.2" -> ShowVisibilityGraph,
     "1.3" -> ShowVoronoiDiagramDemo,
     "2.1" -> PRMDemo,
+    "2.2" -> RRTDemo,
   )
 
   continually(scala.io.StdIn.readLine("Select exercise: ")) map exercises.get forall {
