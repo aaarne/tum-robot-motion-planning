@@ -33,17 +33,32 @@ class GraphSearchSuite extends FlatSpec with Matchers {
     }
   }
 
+  it should "also work on a graph with string vertices" in new GraphSearchTestEnvironment {
+    bfs(anotherTestGraph, "a", "f") match {
+      case None => fail()
+      case Some(sol) => sol should be(List("a", "c", "f"))
+    }
+  }
+
   "The connectivity check" should "identify the test graph as unconnected with 4 components" in new GraphSearchTestEnvironment {
-    checkConnectivity(testGraph) should be(3)
+    countCommunities(testGraph) should be(3)
   }
 
   it should "identify the connectedGraph as connected" in new GraphSearchTestEnvironment {
-    checkConnectivity(connectedGraph) should be(0)
+    countCommunities(connectedGraph) should be(1)
+  }
+
+  it should "identify two components in the graph with two components" in new GraphSearchTestEnvironment {
+    countCommunities(twoComponentsGraph) should be(2)
+  }
+
+  it should "identity one components when adding a link in the two component graph" in new GraphSearchTestEnvironment {
+    countCommunities(twoComponentsGraph + (1 -> List(1, 2, 6))) should be(1)
   }
 
 
   trait GraphSearchTestEnvironment {
-    val testGraph = Map(
+    val testGraph: Map[Int, List[Int]] = Map(
       1 -> List(2, 3),
       2 -> List(3, 5, 7, 12),
       3 -> List(4, 5, 8, 12),
@@ -58,10 +73,28 @@ class GraphSearchSuite extends FlatSpec with Matchers {
       12 -> Nil,
     )
 
-    val connectedGraph = Map(
+    val anotherTestGraph: Map[String, List[String]] = Map(
+      "a" -> List("b", "c"),
+      "b" -> List("a", "d"),
+      "c" -> List("f"),
+      "d" -> List("e"),
+      "e" -> List("f"),
+      "f" -> Nil,
+    )
+
+    val connectedGraph: Map[Symbol, List[Symbol]] = Map(
+      'node1 -> List('node2, 'node3),
+      'node2 -> List('node1, 'node3),
+      'node3 -> List('node1, 'node2),
+    )
+
+    val twoComponentsGraph: Map[Int, List[Int]] = Map(
       1 -> List(2, 3),
-      2 -> List(3, 1),
+      2 -> List(1, 3),
       3 -> List(1, 2),
+      4 -> List(5, 6),
+      5 -> List(4, 6),
+      6 -> List(4, 5),
     )
   }
 

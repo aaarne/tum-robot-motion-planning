@@ -36,6 +36,9 @@ object Graphs {
           bfsrec(tail ++ children, head :: explored, transitions ++ (children map (c => c -> head)))
       }
 
+    println(s"Graph search. Start: $start. Goal: $goal. On Graph:")
+    g.toList foreach { case (v, nbhd) => println(s"\t$v -> $nbhd") }
+
     bfsrec(start :: Nil, Nil, Map.empty)
   }
 
@@ -47,15 +50,18 @@ object Graphs {
     *         (i.e. a return value of 0 indices a completely connected graph, such that
     *         for every pair of nodes a path exists)
     */
-  def checkConnectivity(g: Map[_, List[_]]): Int = {
+  def countCommunities(g: Map[_, List[_]]): Int = {
     val n = g.size
     val laplacian: DenseMatrix[Double] = DenseMatrix.zeros(n, n)
 
-    g.zipWithIndex foreach {
-      case ((_, nbhd), i1) => nbhd.zipWithIndex foreach {
-        case (_, i2) =>
-          laplacian(i1, i2) = -1.0
-      }
+    val graphList = g.toList
+    val graphKeys = graphList.map(_._1)
+
+    graphList.zipWithIndex foreach {
+      case ((_, nbhd), i1) =>
+        (0 until n) foreach { i2 =>
+          if (nbhd contains graphKeys(i2)) laplacian(i1, i2) = -1.0
+        }
         laplacian(i1, i1) = 1.0 * nbhd.size
     }
 

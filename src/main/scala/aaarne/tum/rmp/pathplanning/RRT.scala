@@ -8,7 +8,7 @@ import breeze.plot._
 
 trait RRT extends PathPlanner {
 
-  val stepSize = 0.5
+  val stepSize = 0.2
 
   case class RRTTree(tree: Tree[Int], coordinates: Map[Int, Point]) {
 
@@ -28,7 +28,7 @@ trait RRT extends PathPlanner {
   var pastTrees: List[RRTTree] = Nil
 
   override def plan(start: Point, destination: Point): Option[Path] = {
-    val tree = RRTTree(Leaf(1), Map(1 -> start))
+    val tree = RRTTree(Leaf(0), Map(0 -> start))
 
     val result = Stream.iterate(tree)(t => t.addSample(samplePoint)).find {
       case RRTTree(_, coordinates) => coordinates.values exists { p =>
@@ -56,15 +56,16 @@ object RRTDemo extends PathPlannerDemo with RRT {
   override val title: String = "RRT Pathplanning"
 
   override def plotGraph(f: Plot, verbose: Boolean): Unit = {
-    if (verbose)
-      pastTrees foreach {
-        case RRTTree(tree, coordinates) => println(tree)
-      }
+
+    pastTrees.zipWithIndex foreach {
+      case (tree, index) => println(s"Tree ${index + 1} has ${tree.coordinates.keys.max + 1} nodes.")
+    }
 
     val points = pastTrees flatMap {
       case RRTTree(tree, coordinates) => coordinates.values
     }
 
-    f += scatter(DenseVector(points map (_.x): _*), DenseVector(points map (_.y): _*), _ => 0.3, _ => Color.LIGHT_GRAY)
+    if (verbose)
+      f += scatter(DenseVector(points map (_.x): _*), DenseVector(points map (_.y): _*), _ => 0.3, _ => Color.LIGHT_GRAY)
   }
 }

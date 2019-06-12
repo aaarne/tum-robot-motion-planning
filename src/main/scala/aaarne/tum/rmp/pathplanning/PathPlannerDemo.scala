@@ -10,25 +10,31 @@ import breeze.stats.distributions.Uniform
 
 trait PathPlannerDemo extends PathPlanner with Plotter with Runnable with RandomPolygons {
 
+  val nObstacles = 20
+
   override val positionSampling: Uniform = Uniform(-8, 8)
   override val radiusSampling: Uniform = Uniform(1, 3)
 
   val title = "Path Planning Map"
 
-  override val obstacles: List[Polygon] =
-    removeCollidingPolygons(Stream.continually(samplesArbitraryPolygon()).take(20).toList)
+  val trials = List(Color.GREEN) // number of queries. Add a color for each trial here
 
+  override val obstacles: List[Polygon] = {
+    val noObstacles: List[Polygon] = Nil
+    Stream.iterate(noObstacles)(obs => sampleNonCollidingPolygon(obs) :: obs)
+      .take(nObstacles).last
+  }
 
   def plotGraph(f: Plot, verbose: Boolean = false): Unit = {}
 
-
   override def run(): Unit = {
+
+    println(s"---------- $title ---------")
     val f = Figure(title)
 
     f subplot 0 ++= obstacles map plot(color = "red")
 
-    List(Color.RED, Color.MAGENTA, Color.GREEN).zipWithIndex foreach {
-      case (color, i) =>
+    trials.zipWithIndex foreach { case (color, i) =>
 
         val start: Point = sampleFreePoint
         val destination: Point = sampleFreePoint
@@ -39,15 +45,16 @@ trait PathPlannerDemo extends PathPlanner with Plotter with Runnable with Random
         plan(start, destination) match {
           case None => println(s"No Solution found for the ${i + 1}. path.")
           case Some(solution) =>
+            println(s"Solution containing ${solution.size} path segments found for the ${i + 1}. path.")
             f subplot 0 ++= plotLineSegments((solution zip solution.tail) map {
               case (p1, p2) => LineSegment(p1, p2)
             }, color = s"${color.getRed},${color.getGreen},${color.getBlue}")
         }
     }
 
-    plotGraph(f subplot 0)
+    plotGraph(f subplot 0, true)
 
     f.refresh()
+    println()
   }
-
 }

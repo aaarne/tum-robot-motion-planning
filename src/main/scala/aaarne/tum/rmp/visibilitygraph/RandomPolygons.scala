@@ -31,9 +31,15 @@ trait RandomPolygons {
   def sampleConcavePolygons(n: Int, nVertices: Int): List[Polygon] =
     (Stream.continually(sample(nVertices)) filterNot (_.convex) take n).toList
 
-  def samplesArbitraryPolygon(maxVertices: Int = 10): Polygon = {
+  def samplePolygon(maxVertices: Int = 10): Polygon = {
     val rnd = Rand.randInt(3, maxVertices + 1)
     sample(rnd.sample())
+  }
+
+  def sampleNonCollidingPolygon(polygons: List[Polygon], maxVertices: Int = 10): Polygon = {
+    Stream.continually(samplePolygon(maxVertices)).filterNot {
+      p => polygons exists (p1 => p1 collidesWith p)
+    }.head
   }
 
   def removeCollidingPolygons(polys: List[Polygon]): List[Polygon] = {

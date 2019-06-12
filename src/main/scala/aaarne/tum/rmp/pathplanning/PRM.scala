@@ -15,7 +15,11 @@ trait PRM extends PathPlanner {
   case class Graph(vertices: List[Point], edges: List[(Int, Int)]) {
     def extend(vertex: Point): Graph = extendGraph(this, vertex)
 
-    def toVertexListFormat: Map[Int, List[Int]] = edges.groupBy(_._1).mapValues(l => l.map(_._2))
+    def toVertexListFormat: Map[Int, List[Int]] = {
+      val raw = edges.groupBy(_._1).mapValues(l => l.map(_._2))
+      val missingKeys = vertices.indices diff raw.keys.toList
+      raw ++ Map(missingKeys map (i => i -> Nil): _*)
+    }
   }
 
   def extendGraph(graph: Graph, vertex: Point): Graph = {
@@ -54,15 +58,15 @@ trait PRM extends PathPlanner {
 
 object PRMDemo extends PathPlannerDemo with PRM {
 
-  override val title = "RPM Pathplanning"
+  override val title = "PRM Pathplanning"
 
   override def plotGraph(f: Plot, verbose: Boolean): Unit = {
 
     println(s"Using $nVertices non-colliding points to construct the PRM")
 
-    checkConnectivity(prm.toVertexListFormat) match {
-      case 0 => println("The probabilistic roadmap is connected :)")
-      case i => println(s"PRM is not connected :( There are ${i + 1} independent graphs.")
+    countCommunities(prm.toVertexListFormat) match {
+      case i if i == 1 => println("The probabilistic roadmap is connected :)")
+      case i => println(s"PRM is not connected :( There are $i independent graphs.")
     }
 
     f += scatter(DenseVector(prm.vertices map (v => v.x): _*), DenseVector(prm.vertices map (v => v.y): _*), _ => 0.3, _ => Color.LIGHT_GRAY)
@@ -72,6 +76,5 @@ object PRMDemo extends PathPlannerDemo with PRM {
         case (v1, v2) => LineSegment(prm.vertices(v1), prm.vertices(v2))
       }, color = "180, 180, 180")
     }
-
   }
 }
