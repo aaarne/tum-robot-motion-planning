@@ -17,7 +17,7 @@ trait PathPlannerDemo extends PathPlanner with Plotter with Runnable with Random
 
   val title = "Path Planning Map"
 
-  val trials = List(Color.GREEN) // number of queries. Add a color for each trial here
+  val trials = List(Color.GREEN, Color.BLACK, Color.ORANGE) // number of queries. Add a color for each trial here
 
   override val obstacles: List[Polygon] = {
     val noObstacles: List[Polygon] = Nil
@@ -52,7 +52,7 @@ trait PathPlannerDemo extends PathPlanner with Plotter with Runnable with Random
         }
     }
 
-    plotGraph(f subplot 0, true)
+    plotGraph(f subplot 0)
 
     f.refresh()
     println()

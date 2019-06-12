@@ -25,23 +25,34 @@ trait RRT extends PathPlanner {
     }
   }
 
+  object RRTTree {
+    /**
+      * Generate infinite stream of RRT Trees rooted at start
+      *
+      * @return
+      */
+    def from(start: Point): Stream[RRTTree] =
+      Stream.iterate(RRTTree(Leaf(0), Map(0 -> start)))(t => t addSample samplePoint)
+  }
+
   var pastTrees: List[RRTTree] = Nil
 
-  override def plan(start: Point, destination: Point): Option[Path] = {
-    val tree = RRTTree(Leaf(0), Map(0 -> start))
-
-    val result = Stream.iterate(tree)(t => t.addSample(samplePoint)).find {
-      case RRTTree(_, coordinates) => coordinates.values exists { p =>
-        obstacles forall (o => !o.lineCollides(LineSegment(p, destination)))
-      }
+  def isPointVisible(point: Point)(rrt: RRTTree): Boolean = rrt match {
+    case RRTTree(_, coordinates) => coordinates.values exists { p =>
+      obstacles forall (o => !o.lineCollides(LineSegment(p, point)))
     }
+  }
 
-    pastTrees = result match {
+  override def plan(start: Point, destination: Point): Option[Path] = {
+
+    val finalTree = RRTTree.from(start) find isPointVisible(destination)
+
+    pastTrees = finalTree match {
       case None => pastTrees
       case Some(t) => pastTrees :+ t
     }
 
-    result map {
+    finalTree map {
       case RRTTree(t, c) =>
         val finalNode = c.filter {
           case (i, p) => obstacles forall (o => !o.lineCollides(LineSegment(p, destination)))

@@ -1,10 +1,9 @@
 package aaarne.tum.rmp
 
-import aaarne.tum.rmp.pathplanning.{PRMDemo, RRTDemo}
+import aaarne.tum.rmp.pathplanning.RRTDemo
 
 object Debug extends App {
 
-  PRMDemo.run()
   RRTDemo.run()
 
 }

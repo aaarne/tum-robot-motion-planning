@@ -5,7 +5,7 @@ import java.awt.Color
 import aaarne.tum.rmp.geometry.LineSegment
 import aaarne.tum.rmp.pathplanning.Graphs._
 import breeze.linalg._
-import breeze.plot.{Plot, _}
+import breeze.plot._
 
 
 trait PRM extends PathPlanner {
@@ -65,16 +65,21 @@ object PRMDemo extends PathPlannerDemo with PRM {
     println(s"Using $nVertices non-colliding points to construct the PRM")
 
     countCommunities(prm.toVertexListFormat) match {
-      case i if i == 1 => println("The probabilistic roadmap is connected :)")
-      case i => println(s"PRM is not connected :( There are $i independent graphs.")
+      case 1 => println("The probabilistic roadmap is connected :)")
+      case n if n > 1 => println(s"PRM is not connected :( There are $n independent graphs.")
     }
 
-    f += scatter(DenseVector(prm.vertices map (v => v.x): _*), DenseVector(prm.vertices map (v => v.y): _*), _ => 0.3, _ => Color.LIGHT_GRAY)
+    f += scatter(
+      DenseVector(prm.vertices map (v => v.x): _*),
+      DenseVector(prm.vertices map (v => v.y): _*),
+      _ => 0.3, _ => Color.LIGHT_GRAY
+    )
 
     if (verbose) {
-      f ++= plotLineSegments(prm.edges map {
+      val pathLineSegments = prm.edges map {
         case (v1, v2) => LineSegment(prm.vertices(v1), prm.vertices(v2))
-      }, color = "180, 180, 180")
+      }
+      f ++= plotLineSegments(pathLineSegments, color = "180, 180, 180")
     }
   }
 }
