@@ -27,7 +27,7 @@ trait PathPlannerDemo extends PathPlanner with Plotter with Runnable with Random
 
     f subplot 0 ++= obstacles map plot(color = "red")
 
-    List(Color.RED, Color.ORANGE, Color.GREEN).zipWithIndex foreach {
+    List(Color.RED, Color.MAGENTA, Color.GREEN).zipWithIndex foreach {
       case (color, i) =>
 
         val start: Point = sampleFreePoint

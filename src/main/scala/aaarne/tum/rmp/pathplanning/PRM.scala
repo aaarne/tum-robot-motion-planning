@@ -65,7 +65,7 @@ object PRMDemo extends PathPlannerDemo with PRM {
       case i => println(s"PRM is not connected :( There are ${i + 1} independent graphs.")
     }
 
-    f += scatter(DenseVector(prm.vertices map (v => v.x): _*), DenseVector(prm.vertices map (v => v.y): _*), _ => 0.3, _ => Color.GRAY)
+    f += scatter(DenseVector(prm.vertices map (v => v.x): _*), DenseVector(prm.vertices map (v => v.y): _*), _ => 0.3, _ => Color.LIGHT_GRAY)
 
     if (verbose) {
       f ++= plotLineSegments(prm.edges map {

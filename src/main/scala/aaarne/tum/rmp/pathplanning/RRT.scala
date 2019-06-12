@@ -65,6 +65,6 @@ object RRTDemo extends PathPlannerDemo with RRT {
       case RRTTree(tree, coordinates) => coordinates.values
     }
 
-    f += scatter(DenseVector(points map (_.x): _*), DenseVector(points map (_.y): _*), _ => 0.3, _ => Color.GRAY)
+    f += scatter(DenseVector(points map (_.x): _*), DenseVector(points map (_.y): _*), _ => 0.3, _ => Color.LIGHT_GRAY)
   }
 }
