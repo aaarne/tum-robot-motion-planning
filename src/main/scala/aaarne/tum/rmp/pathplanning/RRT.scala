@@ -1,7 +1,10 @@
 package aaarne.tum.rmp.pathplanning
 
+import java.awt.Color
+
 import aaarne.tum.rmp.geometry.LineSegment
 import breeze.linalg._
+import breeze.plot._
 
 trait RRT extends PathPlanner {
 
@@ -22,6 +25,8 @@ trait RRT extends PathPlanner {
     }
   }
 
+  var pastTrees: List[RRTTree] = Nil
+
   override def plan(start: Point, destination: Point): Option[Path] = {
     val tree = RRTTree(Leaf(1), Map(1 -> start))
 
@@ -29,6 +34,11 @@ trait RRT extends PathPlanner {
       case RRTTree(_, coordinates) => coordinates.values exists { p =>
         obstacles forall (o => !o.lineCollides(LineSegment(p, destination)))
       }
+    }
+
+    pastTrees = result match {
+      case None => pastTrees
+      case Some(t) => pastTrees :+ t
     }
 
     result map {
@@ -44,4 +54,17 @@ trait RRT extends PathPlanner {
 
 object RRTDemo extends PathPlannerDemo with RRT {
   override val title: String = "RRT Pathplanning"
+
+  override def plotGraph(f: Plot, verbose: Boolean): Unit = {
+    if (verbose)
+      pastTrees foreach {
+        case RRTTree(tree, coordinates) => println(tree)
+      }
+
+    val points = pastTrees flatMap {
+      case RRTTree(tree, coordinates) => coordinates.values
+    }
+
+    f += scatter(DenseVector(points map (_.x): _*), DenseVector(points map (_.y): _*), _ => 0.3, _ => Color.GRAY)
+  }
 }

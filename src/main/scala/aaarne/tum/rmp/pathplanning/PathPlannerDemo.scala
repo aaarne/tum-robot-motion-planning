@@ -27,8 +27,6 @@ trait PathPlannerDemo extends PathPlanner with Plotter with Runnable with Random
 
     f subplot 0 ++= obstacles map plot(color = "red")
 
-    plotGraph(f subplot 0)
-
     List(Color.RED, Color.ORANGE, Color.GREEN).zipWithIndex foreach {
       case (color, i) =>
 
@@ -46,6 +44,8 @@ trait PathPlannerDemo extends PathPlanner with Plotter with Runnable with Random
             }, color = s"${color.getRed},${color.getGreen},${color.getBlue}")
         }
     }
+
+    plotGraph(f subplot 0)
 
     f.refresh()
   }

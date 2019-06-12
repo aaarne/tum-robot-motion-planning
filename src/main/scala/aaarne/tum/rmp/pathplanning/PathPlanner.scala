@@ -14,7 +14,6 @@ trait PathPlanner {
   val xdim: (Double, Double) = (-10.0, 10.0)
   val ydim: (Double, Double) = (-10.0, 10.0)
 
-
   implicit def point2vec(p: Point): Vector[Double] = DenseVector(p.x, p.y)
 
   val obstacles: List[Polygon]
