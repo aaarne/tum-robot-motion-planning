@@ -9,6 +9,7 @@ import breeze.plot._
 trait RandomTreePathPlanner extends PathPlanner {
 
   val stepSize = 0.2
+  val maxTrials = 10000
 
   case class RRTTree(tree: Tree[Int], coordinates: Map[Int, Point]) {
 
@@ -42,12 +43,14 @@ trait RandomTreePathPlanner extends PathPlanner {
 
   var pastTrees: List[RRTTree] = Nil
 
-  def pointPairEyeContact(p1: Point, p2: Point): Boolean =
+  def hasEyeContact(p1: Point, p2: Point): Boolean =
     obstacles forall (o => !o.lineCollides(LineSegment(p1, p2)))
 
   def isPointVisible(point: Point)(rrt: RRTTree): Boolean = rrt match {
-    case RRTTree(_, coordinates) => coordinates.values exists (pointPairEyeContact(point, _))
+    case RRTTree(_, coordinates) => coordinates.values exists hasEyeContactTo(point)
   }
+
+  def hasEyeContactTo(p: Point)(q: Point): Boolean = hasEyeContact(p, q)
 }
 
 /**
@@ -55,24 +58,17 @@ trait RandomTreePathPlanner extends PathPlanner {
   */
 trait SimpleRRT extends RandomTreePathPlanner {
 
-  override def plan(start: Point, destination: Point): Option[Path] = {
+  override def plan(start: Point, destination: Point): Option[Path] =
+    RRTTree.from(start) take maxTrials find isPointVisible(destination) map computePath(destination)
 
-    val finalTree = RRTTree.from(start) find isPointVisible(destination)
+  def computePath(destination: Point)(finalTree: RRTTree): Path = {
+    pastTrees = finalTree :: Nil
+    val finalNode = finalTree.coordinates.filter { case (_, p) => hasEyeContact(destination, p) }.keys.head
+    val pathToFinalNode = finalTree.tree pathTo finalNode map finalTree.coordinates
 
-    pastTrees = finalTree match {
-      case None => Nil
-      case Some(t) => t :: Nil
-    }
-
-    finalTree match {
-      case Some(RRTTree(t, c)) =>
-        val finalNode = c.filter {
-          case (i, p) => obstacles forall (o => !o.lineCollides(LineSegment(p, destination)))
-        }.head._1
-        Some((t pathTo finalNode map c) :+ destination)
-      case None => None
-    }
+    pathToFinalNode :+ destination
   }
+
 }
 
 /**
@@ -80,36 +76,39 @@ trait SimpleRRT extends RandomTreePathPlanner {
   */
 trait RRT extends RandomTreePathPlanner {
 
-  def lastAddedPoint(t: RRTTree): Point = t.coordinates(t.coordinates.keys.max)
+  override def plan(start: Point, destination: Point): Option[Path] = {
 
-  def connectable(trees: (RRTTree, RRTTree)): Boolean = trees match {
-    case (t1, t2) =>
-      (List(lastAddedPoint(t1), lastAddedPoint(t2)) zip List(t2, t1)) exists {
-        case (p, tree) => isPointVisible(p)(tree)
-      }
+    val treeStream = RRTTree.from(start) zip RRTTree.from(destination)
+
+    treeStream take maxTrials find connectable map computePath
   }
 
-  def computePath(startTree: RRTTree, goalTree: RRTTree): Path = (startTree, goalTree) match {
+  def connectable(trees: (RRTTree, RRTTree)): Boolean = {
+
+    def lastAddedPoint(t: RRTTree): Point = t.coordinates(t.coordinates.keys.max) // just for performance...
+
+    val lastPointTests = List(lastAddedPoint(trees._1), lastAddedPoint(trees._2)) map isPointVisible
+
+    (lastPointTests zip List(trees._2, trees._1)) exists {
+      case (pointVisibleFrom, tree) => pointVisibleFrom(tree)
+    }
+  }
+
+  def computePath(finalState: (RRTTree, RRTTree)): Path = finalState match {
     case (RRTTree(t1, points1), RRTTree(t2, points2)) =>
       val paths = for {
         (finalNode1, p1) <- points1.toStream
         (finalNode2, p2) <- points2.toStream
-        if pointPairEyeContact(p1, p2)
+        if hasEyeContact(p1, p2)
       } yield {
         val path1 = t1 pathTo finalNode1 map points1
         val path2 = t2 pathTo finalNode2 map points2
         path1 ++ path2.reverse
       }
+      pastTrees = RRTTree(t1, points1) :: RRTTree(t2, points2) :: Nil
       paths.head
   }
 
-  override def plan(start: Point, destination: Point): Option[Path] =
-    (RRTTree.from(start) zip RRTTree.from(destination)) find connectable match {
-      case Some((startTree, goalTree)) =>
-        pastTrees = startTree :: goalTree :: Nil
-        Some(computePath(startTree, goalTree))
-      case None => None
-    }
 }
 
 trait RRTViz extends PathPlannerDemo with RandomTreePathPlanner {
