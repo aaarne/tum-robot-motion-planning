@@ -22,9 +22,11 @@ target/universal/stage/bin/rmp
 ## 1.1 Configuration Space
 
 - __World:__
+
 ![World](ex/cs_world.png)
 
 - __Configuration Space:__
+
 ![Configuration Space](ex/cs.png)
 
 ## 1.2 Visibility Graph
@@ -32,8 +34,11 @@ target/universal/stage/bin/rmp
 
 ## 1.3 Voronoi Diagram
 - __World:__
+
 ![World](ex/voronoi_world.png)
+
 - __Voronoi Diagram:__
+
 ![Voronoi](ex/voronoi.png)
 
 ## 2.1 Probabilistic Roadmap (PRM) Pathplanning
