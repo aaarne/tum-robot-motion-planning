@@ -60,13 +60,13 @@ trait SimpleRRT extends RandomTreePathPlanner {
       case Some(t) => t :: Nil
     }
 
-    finalTree map {
-      case RRTTree(t, c) =>
+    finalTree match {
+      case Some(RRTTree(t, c)) =>
         val finalNode = c.filter {
           case (i, p) => obstacles forall (o => !o.lineCollides(LineSegment(p, destination)))
         }.head._1
-
-        (t pathTo finalNode map c) :+ destination
+        Some((t pathTo finalNode map c) :+ destination)
+      case None => None
     }
   }
 }
@@ -100,10 +100,11 @@ trait RRT extends RandomTreePathPlanner {
   }
 
   override def plan(start: Point, destination: Point): Option[Path] =
-    (RRTTree.from(start) zip RRTTree.from(destination)) find connectable map {
-      case (startTree, goalTree) =>
+    (RRTTree.from(start) zip RRTTree.from(destination)) find connectable match {
+      case Some((startTree, goalTree)) =>
         pastTrees = startTree :: goalTree :: Nil
-        computePath(startTree, goalTree)
+        Some(computePath(startTree, goalTree))
+      case None => None
     }
 }
 
