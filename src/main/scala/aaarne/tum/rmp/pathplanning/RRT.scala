@@ -6,7 +6,7 @@ import aaarne.tum.rmp.geometry.LineSegment
 import breeze.linalg._
 import breeze.plot._
 
-private trait RandomTreePathPlanner extends PathPlanner {
+trait RandomTreePathPlanner extends PathPlanner {
 
   val stepSize = 0.2
 

@@ -46,12 +46,7 @@ trait PRM extends PathPlanner {
     val i_start = graph.vertices.size - 2
     val i_dest = graph.vertices.size - 1
 
-    val directConnection = LineSegment(start, destination)
-
-    if (obstacles forall (o => !o.lineCollides(directConnection)))
-      Some(List(start, destination))
-    else
-      bfs(graph.toVertexListFormat, i_start, i_dest) map (_ map graph.vertices)
+    bfs(graph.toVertexListFormat, i_start, i_dest) map (solution => solution map graph.vertices)
   }
 
 }
