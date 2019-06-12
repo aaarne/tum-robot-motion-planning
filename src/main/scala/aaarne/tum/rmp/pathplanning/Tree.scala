@@ -1,6 +1,6 @@
 package aaarne.tum.rmp.pathplanning
 
-abstract class Tree[T] {
+sealed abstract class Tree[T] {
 
   def contains(value: T): Boolean = this match {
     case Leaf(v) => v == value
