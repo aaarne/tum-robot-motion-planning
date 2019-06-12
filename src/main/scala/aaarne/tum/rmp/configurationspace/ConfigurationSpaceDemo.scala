@@ -1,5 +1,7 @@
 package aaarne.tum.rmp.configurationspace
 
+import java.awt.Color
+
 import aaarne.tum.rmp.geometry.{Plotter, Polygon}
 import breeze.linalg._
 import breeze.plot.{Figure, Plot, image}
@@ -20,9 +22,9 @@ object ShowConfigurationSpace extends ConfigurationSpaceDemo with Runnable with 
   def plotConfspace(): Unit = {
     val f = Figure("Robot Visualizer")
 
-    f subplot 0 += plot("blue", "Robot")(robot moveTo List(.25 * math.Pi, 0.25 * math.Pi))
+    f subplot 0 += plot(Color.BLUE, "Robot")(robot moveTo List(.25 * math.Pi, 0.25 * math.Pi))
     f subplot 0 ++= obstacles.zipWithIndex map {
-      case (shape, i) => plot("red", s"Obstacle $i")(shape)
+      case (shape, i) => plot(Color.RED, s"Obstacle $i")(shape)
     }
 
     f.subplot(0).legend = true

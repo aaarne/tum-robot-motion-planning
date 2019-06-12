@@ -10,7 +10,7 @@ import breeze.plot._
 
 trait PRM extends PathPlanner {
 
-  val nVertices: Int = 20
+  val nVertices: Int = 50
 
   case class Graph(vertices: List[Point], edges: List[(Int, Int)]) {
     def extend(vertex: Point): Graph = extendGraph(this, vertex)
@@ -60,7 +60,7 @@ object PRMDemo extends PathPlannerDemo with PRM {
 
   override val title = "PRM Pathplanning"
 
-  override def plotGraph(f: Plot, verbose: Boolean): Unit = {
+  override def plotMultipleQuery(f: Plot, verbose: Boolean): Unit = {
 
     println(s"Using $nVertices non-colliding points to construct the PRM")
 
@@ -79,7 +79,8 @@ object PRMDemo extends PathPlannerDemo with PRM {
       val pathLineSegments = prm.edges map {
         case (v1, v2) => LineSegment(prm.vertices(v1), prm.vertices(v2))
       }
-      f ++= plotLineSegments(pathLineSegments, color = "180, 180, 180")
+      f ++= plotLineSegments(pathLineSegments, color = new Color(180, 180, 180))
     }
   }
+
 }

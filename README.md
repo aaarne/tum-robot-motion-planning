@@ -37,8 +37,11 @@ target/universal/stage/bin/rmp
 ![Voronoi](ex/voronoi.png)
 
 ## 2.1 Probabilistic Roadmap (PRM) Pathplanning
-The PRM is not connected. No solution found for the black query.
+The PRM is not connected. No solution found for the green query. 50 samples were used.
 ![PRM](ex/prm.png)
 
 ## 2.2 Rapidly-exploring Random Trees (RRT) Pathplanning (single tree mode)
-![RRT](ex/rrt_single.png)
+![MonoRRT](ex/rrt_single.png)
+
+## 2.3 Rapidly-exploring Random Trees (RRT) Pathplanning (symmetric bi-tree mode)
+![RRT](ex/rrt_sym.png)

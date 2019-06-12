@@ -1,5 +1,7 @@
 package aaarne.tum.rmp.visibilitygraph
 
+import java.awt.Color
+
 import aaarne.tum.rmp.geometry.{Plotter, Polygon}
 import breeze.plot.Figure
 
@@ -33,9 +35,9 @@ object ShowVisibilityGraph extends VisibilityGraphDemo
     val f = Figure("Random Polygon")
 
     f subplot 0 ++= polygons map { p =>
-      plot(if (p.convex) "g" else "r")(p)
+      plot(if (p.convex) Color.GREEN else Color.RED)(p)
     }
-    f subplot 0 ++= plotLineSegments(visibilityGraph, "180,180,180")
+    f subplot 0 ++= plotLineSegments(visibilityGraph, new Color(180, 180, 180))
 
     f.refresh()
   }
