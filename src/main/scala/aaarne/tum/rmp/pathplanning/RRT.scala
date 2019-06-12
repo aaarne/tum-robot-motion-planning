@@ -13,15 +13,19 @@ trait RandomTreePathPlanner extends PathPlanner {
   case class RRTTree(tree: Tree[Int], coordinates: Map[Int, Point]) {
 
     def addSample: RRTTree = {
-      val point = samplePoint
-      val closest = coordinates.minBy(_._2 dist point)
-      val p1 = DenseVector(closest._2.x, closest._2.y)
-      val p2: Vector[Double] = point
-      val newCoordinate = p1 + stepSize * (p2 - p1)
-      if (obstacles exists (_.lineCollides(LineSegment(newCoordinate, p1)))) this.addSample
+      val randomPoint: Point = samplePoint
+      val (n, closest) = coordinates.minBy(_._2 dist randomPoint)
+
+      val p1: Vector[Double] = closest
+      val p2: Vector[Double] = randomPoint
+      val newPoint = p1 + stepSize * (p2 - p1)
+      val sampleImpossible = obstacles exists (_.lineCollides(LineSegment(newPoint, p1)))
+
+      if (sampleImpossible)
+        this.addSample // try again tail-recursively
       else {
-        val i = coordinates.keys.max + 1
-        RRTTree(tree.add(closest._1, i), coordinates + (i -> Point(newCoordinate(0), newCoordinate(1))))
+        val newIndex = coordinates.keys.max + 1
+        RRTTree(tree.add(n, newIndex), coordinates + (newIndex -> Point(newPoint(0), newPoint(1))))
       }
     }
   }
@@ -33,7 +37,7 @@ trait RandomTreePathPlanner extends PathPlanner {
       * @return
       */
     def from(start: Point): Stream[RRTTree] =
-      Stream.iterate(RRTTree(Leaf(0), Map(0 -> start)))(_.addSample)
+      Stream.iterate(RRTTree(Leaf(0), Map(0 -> start)))(tree => tree.addSample)
   }
 
   var pastTrees: List[RRTTree] = Nil
