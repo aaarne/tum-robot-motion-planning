@@ -36,9 +36,6 @@ object Graphs {
           bfsrec(tail ++ children, head :: explored, transitions ++ (children map (c => c -> head)))
       }
 
-    println(s"Graph search. Start: $start. Goal: $goal. On Graph:")
-    g.toList foreach { case (v, nbhd) => println(s"\t$v -> $nbhd") }
-
     bfsrec(start :: Nil, Nil, Map.empty)
   }
 
