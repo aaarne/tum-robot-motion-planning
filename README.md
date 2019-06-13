@@ -52,7 +52,7 @@ The PRM is not connected. No solution found for the green query. 50 samples were
 ![RRT](ex/rrt_sym.png)
 
 # Code Snippets from this Repo
-## From RRT
+## Single Tree RRT
 ```scala
 trait SimpleRRT extends RandomTreePathPlanner {
 
@@ -61,6 +61,8 @@ trait SimpleRRT extends RandomTreePathPlanner {
 
 }
 ```
+
+## Double Tree RRT
 ```scala
 trait RRT extends RandomTreePathPlanner {
 
@@ -112,9 +114,7 @@ object Graphs {
     * Compute number of connected components in the graph
     *
     * @param g the graph in map from Vertex to List[Vertex] format
-    * @return Number of connected components - 1
-    *         (i.e. a return value of 0 indices a completely connected graph, such that
-    *         for every pair of nodes a path exists)
+    * @return Number of connected components 
     */
   def countCommunities(g: Map[_, List[_]]): Int = {
     val n = g.size

@@ -43,9 +43,7 @@ object Graphs {
     * Compute number of connected components in the graph
     *
     * @param g the graph in map from Vertex to List[Vertex] format
-    * @return Number of connected components - 1
-    *         (i.e. a return value of 0 indices a completely connected graph, such that
-    *         for every pair of nodes a path exists)
+    * @return Number of connected components 
     */
   def countCommunities(g: Map[_, List[_]]): Int = {
     val n = g.size
