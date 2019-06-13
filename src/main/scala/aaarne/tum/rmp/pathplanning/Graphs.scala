@@ -30,10 +30,10 @@ object Graphs {
     @tailrec def bfsrec(frontier: List[Vertex], explored: List[Vertex], transitions: Map[Vertex, Vertex]): Option[List[Vertex]] =
       frontier match {
         case Nil => None
-        case head :: tail if head == goal => Some(extractPath(goal, transitions))
-        case head :: tail =>
-          val children = g(head) diff (tail ++ explored :+ head)
-          bfsrec(tail ++ children, head :: explored, transitions ++ (children map (c => c -> head)))
+        case head :: _ if head == goal => Some(extractPath(goal, transitions))
+        case node :: tail =>
+          val children = g(node) diff (tail ++ explored :+ node)
+          bfsrec(tail ++ children, node :: explored, transitions ++ (children map (c => c -> node)))
       }
 
     bfsrec(start :: Nil, Nil, Map.empty)

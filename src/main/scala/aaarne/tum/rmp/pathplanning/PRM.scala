@@ -36,9 +36,10 @@ trait PRM extends PathPlanner {
   }
 
   lazy val prm: Graph = {
-    val randomPoints = (1 to nVertices) map (_ => sampleFreePoint)
+    val randomPoints = List.fill(nVertices)(samplePoint)
+    val emptyGraph = Graph(Nil, Nil)
 
-    (Graph(Nil, Nil) /: randomPoints) (extendGraph)
+    (emptyGraph /: randomPoints) (extendGraph)
   }
 
   override def plan(start: Point, destination: Point): Option[Path] = {
@@ -51,7 +52,6 @@ trait PRM extends PathPlanner {
       case None => None
     }
   }
-
 }
 
 object PRMDemo extends PathPlannerDemo with PRM {
@@ -80,5 +80,4 @@ object PRMDemo extends PathPlannerDemo with PRM {
       f ++= plotLineSegments(pathLineSegments, color = new Color(180, 180, 180))
     }
   }
-
 }
