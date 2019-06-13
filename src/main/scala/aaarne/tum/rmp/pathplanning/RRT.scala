@@ -19,15 +19,14 @@ trait RandomTreePathPlanner extends PathPlanner {
 
       val p1: Vector[Double] = closest
       val p2: Vector[Double] = randomPoint
-      val newPoint = p1 + stepSize * (p2 - p1)
-      val sampleImpossible = obstacles exists (_.lineCollides(LineSegment(newPoint, p1)))
+      val newVector = p1 + stepSize * (p2 - p1)
+      val newPoint = Point(newVector(0), newVector(1))
+      val newIndex = coordinates.keys.max + 1
 
-      if (sampleImpossible)
+      if (haveEyeContact(newPoint, closest))
+        RRTTree(tree.add(n, newIndex), coordinates + (newIndex -> newPoint))
+      else
         this.addSample // try again tail-recursively
-      else {
-        val newIndex = coordinates.keys.max + 1
-        RRTTree(tree.add(n, newIndex), coordinates + (newIndex -> Point(newPoint(0), newPoint(1))))
-      }
     }
   }
 
@@ -43,14 +42,14 @@ trait RandomTreePathPlanner extends PathPlanner {
 
   var pastTrees: List[RRTTree] = Nil
 
-  def hasEyeContact(p1: Point, p2: Point): Boolean =
+  def haveEyeContact(p1: Point, p2: Point): Boolean =
     obstacles forall (o => !o.lineCollides(LineSegment(p1, p2)))
 
-  def isPointVisible(point: Point)(rrt: RRTTree): Boolean = rrt match {
+  def canSeePoint(point: Point)(rrt: RRTTree): Boolean = rrt match {
     case RRTTree(_, coordinates) => coordinates.values exists hasEyeContactTo(point)
   }
 
-  def hasEyeContactTo(p: Point)(q: Point): Boolean = hasEyeContact(p, q)
+  def hasEyeContactTo(p: Point)(q: Point): Boolean = haveEyeContact(p, q)
 }
 
 /**
@@ -59,11 +58,11 @@ trait RandomTreePathPlanner extends PathPlanner {
 trait SimpleRRT extends RandomTreePathPlanner {
 
   override def plan(start: Point, destination: Point): Option[Path] =
-    RRTTree.from(start) take maxTrials find isPointVisible(destination) map computePath(destination)
+    RRTTree.from(start) take maxTrials find canSeePoint(destination) map computePath(destination)
 
   def computePath(destination: Point)(finalTree: RRTTree): Path = {
     pastTrees = finalTree :: Nil
-    val finalNode = finalTree.coordinates.filter { case (_, p) => hasEyeContact(destination, p) }.keys.head
+    val finalNode = finalTree.coordinates.filter { case (_, p) => haveEyeContact(destination, p) }.keys.head
     val pathToFinalNode = finalTree.tree pathTo finalNode map finalTree.coordinates
 
     pathToFinalNode :+ destination
@@ -87,7 +86,7 @@ trait RRT extends RandomTreePathPlanner {
 
     def lastAddedPoint(t: RRTTree): Point = t.coordinates(t.coordinates.keys.max) // just for performance...
 
-    val lastPointTests = List(lastAddedPoint(trees._1), lastAddedPoint(trees._2)) map isPointVisible
+    val lastPointTests = List(lastAddedPoint(trees._1), lastAddedPoint(trees._2)) map canSeePoint
 
     (lastPointTests zip List(trees._2, trees._1)) exists {
       case (pointVisibleFrom, tree) => pointVisibleFrom(tree)
@@ -99,7 +98,7 @@ trait RRT extends RandomTreePathPlanner {
       val paths = for {
         (finalNode1, p1) <- points1.toStream
         (finalNode2, p2) <- points2.toStream
-        if hasEyeContact(p1, p2)
+        if haveEyeContact(p1, p2)
       } yield {
         val path1 = t1 pathTo finalNode1 map points1
         val path2 = t2 pathTo finalNode2 map points2
