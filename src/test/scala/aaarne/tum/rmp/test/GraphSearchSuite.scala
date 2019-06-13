@@ -40,7 +40,7 @@ class GraphSearchSuite extends FlatSpec with Matchers {
     }
   }
 
-  "The connectivity check" should "identify the test graph as unconnected with 4 components" in new GraphSearchTestEnvironment {
+  "The connectivity check" should "identify the test graph as unconnected with 3 components" in new GraphSearchTestEnvironment {
     countCommunities(testGraph) should be(3)
   }
 

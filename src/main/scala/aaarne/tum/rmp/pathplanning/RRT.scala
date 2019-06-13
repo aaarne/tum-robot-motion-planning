@@ -30,7 +30,7 @@ trait RandomTreePathPlanner extends PathPlanner {
     }
   }
 
-  object RRTTree {
+  object RRTTreeStream {
     /**
       * Generate infinite stream of RRT Trees rooted at start
       *
@@ -58,7 +58,7 @@ trait RandomTreePathPlanner extends PathPlanner {
 trait SimpleRRT extends RandomTreePathPlanner {
 
   override def plan(start: Point, destination: Point): Option[Path] =
-    RRTTree.from(start) take maxTrials find canSeePoint(destination) map computePath(destination)
+    RRTTreeStream from start take maxTrials find canSeePoint(destination) map computePath(destination)
 
   def computePath(destination: Point)(finalTree: RRTTree): Path = {
     pastTrees = finalTree :: Nil
@@ -77,7 +77,7 @@ trait RRT extends RandomTreePathPlanner {
 
   override def plan(start: Point, destination: Point): Option[Path] = {
 
-    val treeStream = RRTTree.from(start) zip RRTTree.from(destination)
+    val treeStream = (RRTTreeStream from start) zip (RRTTreeStream from destination)
 
     treeStream take maxTrials find connectable map computePath
   }
