@@ -76,31 +76,30 @@ object Graphs {
     */
   def astar[Vertex](g: Vertex => List[(Vertex, Double)], heuristics: Vertex => Double, start: Vertex, goal: Vertex): Option[List[Vertex]] = {
 
-    @tailrec def astarrec(frontier: List[(Vertex, Double)], explored: Map[Vertex, Double], transitions: Map[Vertex, Vertex]): Option[List[Vertex]] =
+    @tailrec def astarrec(frontier: List[(Vertex, Double, Double)], explored: List[Vertex], transitions: Map[Vertex, Vertex]): Option[List[Vertex]] =
       frontier match {
         case Nil => None
-        case (node, _) :: tail if node == goal => Some(extractPath(start, goal, transitions))
-        case (node, _) :: tail =>
-          val cost = transitions.get(node).map(explored).getOrElse(0.0)
-          val children = (g(node) filterNot (c => (explored.keySet contains c._1) || (c._1 == node))) map {
-            case (v, c) => (v, cost + c + heuristics(v))
+        case (node, _, _) :: tail if node == goal => Some(extractPath(start, goal, transitions))
+        case (node, _, pathCost) :: tail =>
+          val children = (g(node) filterNot (c => (explored contains c._1) || (c._1 == node))) map {
+            case (v, c) => (v, pathCost + c + heuristics(v), pathCost + c)
           }
 
-          val newTransitions: List[Vertex] = children.toMap.keys.toList diff tail.filterNot {
-            case (v, c) => children.toMap.get(v) match {
+          val newTransitions: List[Vertex] = children.map(_._1) diff tail.filterNot {
+            case (v, hCost, trueCost) => children.find(n => n._1 == v) match {
               case None => false
-              case Some(c1) => c1 < c
+              case Some((n, hc, tc)) => hc < hCost
             }
           }.map(_._1)
 
           val updatedFrontier = (tail ++ children).groupBy(_._1).toList.map {
-            case (v, cs) => (v, cs.map(_._2).min)
+            case (v, states) => (v, states.map(_._2).min, states.map(_._3).min)
           }.sortBy(_._2)
 
-          astarrec(updatedFrontier, explored + (node -> cost), transitions ++ newTransitions.map(v => v -> node))
+          astarrec(updatedFrontier, node :: explored, transitions ++ newTransitions.map(v => v -> node))
       }
 
-    astarrec((start, heuristics(start)) :: Nil, Map.empty, Map.empty)
+    astarrec((start, heuristics(start), 0.0) :: Nil, Nil, Map.empty)
   }
 
   /**
