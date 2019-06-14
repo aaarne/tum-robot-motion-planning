@@ -76,12 +76,13 @@ object Graphs {
     */
   def astar[Vertex](g: Vertex => List[(Vertex, Double)], heuristics: Vertex => Double, start: Vertex, goal: Vertex): Option[List[Vertex]] = {
 
-    @tailrec def astarrec(frontier: List[(Vertex, Double)], explored: List[Vertex], transitions: Map[Vertex, Vertex]): Option[List[Vertex]] =
+    @tailrec def astarrec(frontier: List[(Vertex, Double)], explored: Map[Vertex, Double], transitions: Map[Vertex, Vertex]): Option[List[Vertex]] =
       frontier match {
         case Nil => None
         case (node, _) :: tail if node == goal => Some(extractPath(start, goal, transitions))
-        case (node, cost) :: tail =>
-          val children = (g(node) filterNot (c => (explored contains c._1) || (c._1 == node))) map {
+        case (node, _) :: tail =>
+          val cost = transitions.get(node).map(explored).getOrElse(0.0)
+          val children = (g(node) filterNot (c => (explored.keySet contains c._1) || (c._1 == node))) map {
             case (v, c) => (v, cost + c + heuristics(v))
           }
 
@@ -96,10 +97,10 @@ object Graphs {
             case (v, cs) => (v, cs.map(_._2).min)
           }.sortBy(_._2)
 
-          astarrec(updatedFrontier, node :: explored, transitions ++ newTransitions.map(v => v -> node))
+          astarrec(updatedFrontier, explored + (node -> cost), transitions ++ newTransitions.map(v => v -> node))
       }
 
-    astarrec((start, heuristics(start)) :: Nil, Nil, Map.empty)
+    astarrec((start, heuristics(start)) :: Nil, Map.empty, Map.empty)
   }
 
   /**

@@ -46,7 +46,7 @@ class GraphSearchSuite extends FlatSpec with Matchers {
   it should "work for the ladders problem" in new LaddersEnvironment {
     val sol = bfs(neighbors, countChars("croissant"), countChars("baritone")) match {
       case None => fail()
-      case Some(solution) => solution map wordDB map (_.head)
+      case Some(solution) => solution map WordDB.wordDB map (_.head)
     }
     sol should be(List("croissant", "carotins", "aroints", "notaries", "baritones", "baritone"))
   }
@@ -80,7 +80,7 @@ class GraphSearchSuite extends FlatSpec with Matchers {
 
     val sol = astar((v: Vertex) => addUnitCost(neighbors(v)), nDifferentCharacters(goal), start, goal) match {
       case None => fail()
-      case Some(solution) => solution map wordDB map (_.head)
+      case Some(solution) => solution map WordDB.wordDB map (_.head)
     }
     sol should be(List("croissant", "carotins", "aroints", "notaries", "baritones", "baritone"))
   }
@@ -134,25 +134,26 @@ class GraphSearchSuite extends FlatSpec with Matchers {
     )
   }
 
-  trait LaddersEnvironment {
-    type Vertex = Map[Char, Int]
-
+  object WordDB {
     def countChars(s: String): Map[Char, Int] =
       ('a' to 'z').map{
         c => c -> s.count(p => p == c)
       }.toMap
 
-    var exploredNodes = 0
-
-    lazy val wordDB: Map[Vertex, List[String]] = {
-
+    lazy val wordDB: Map[Map[Char, Int], List[String]] = {
       val source = Source.fromURL(getClass.getResource("/wordList.txt"))
       val words = source.getLines().toList
       source.close()
       words groupBy countChars
     }
+  }
 
-    lazy val existingWordsLookup = wordDB.keys.toSet
+  trait LaddersEnvironment {
+    type Vertex = Map[Char, Int]
+
+    lazy val existingWordsLookup = WordDB.wordDB.keys.toSet
+
+    val countChars = (s: String) => WordDB.countChars(s)
 
     def neighbors(v: Vertex): List[Vertex] = {
       val withoutOne = v flatMap {
