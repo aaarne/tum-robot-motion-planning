@@ -86,11 +86,11 @@ object Graphs {
           }
 
           val newTransitions: List[Vertex] = children.map(_._1) diff tail.filterNot {
-            case (v, hCost, trueCost) => children.find(n => n._1 == v) match {
+            case (v, heuristicCost, pathCost) => children.find(n => n._1 == v) match {
               case None => false
-              case Some((n, hc, tc)) => hc < hCost
+              case Some((v1, heuristicCost1, pathCost1)) => heuristicCost1 < heuristicCost
             }
-          }.map(_._1)
+          }.map {case (v, _, _) => v}
 
           val updatedFrontier = (tail ++ children).groupBy(_._1).toList.map {
             case (v, states) => (v, states.map(_._2).min, states.map(_._3).min)
