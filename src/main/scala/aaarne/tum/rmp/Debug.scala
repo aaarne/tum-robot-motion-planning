@@ -1,9 +1,8 @@
 package aaarne.tum.rmp
 
-import aaarne.tum.rmp.pathplanning.PRMDemo
+import aaarne.tum.rmp.pathplanning.{PRMDemo, RandomTreeGrowthDemo}
 
 object Debug extends App {
 
-  PRMDemo.run()
-
+  RandomTreeGrowthDemo.run()
 }

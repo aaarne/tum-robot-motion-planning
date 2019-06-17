@@ -28,17 +28,21 @@ trait PathPlannerDemo extends PathPlanner with Plotter with Runnable with Random
 
   def plotMultipleQuery(f: Plot, verbose: Boolean = false): Unit = {}
 
+  def plotWorld(f: Plot): Unit = {
+    f ++= obstacles map plot(color = Color.BLACK)
+    f += plot(color = Color.LIGHT_GRAY)(Rectangle(
+      center = DenseVector((xdim._1 + xdim._2) / 2, (ydim._1 + ydim._2) / 2),
+      width = xdim._2 - xdim._1,
+      height = ydim._2 - ydim._1)
+    )
+  }
+
   override def run(): Unit = {
 
     println(s"---------- $title ---------")
     val f = Figure(title)
 
-    f subplot 0 ++= obstacles map plot(color = Color.BLACK)
-    f subplot 0 += plot(color = Color.LIGHT_GRAY)(Rectangle(
-      center = DenseVector((xdim._1 + xdim._2) / 2, (ydim._1 + ydim._2) / 2),
-      width = xdim._2 - xdim._1,
-      height = ydim._2 - ydim._1)
-    )
+    plotWorld(f subplot 0)
 
     trials.zipWithIndex foreach { case (color, i) =>
 

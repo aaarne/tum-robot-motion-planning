@@ -41,7 +41,7 @@ trait PRM extends PathPlanner {
   }
 
   lazy val prm: Graph = {
-    val randomPoints = List.fill(nVertices)(samplePoint)
+    val randomPoints = List.fill(nVertices)(sampleFreePoint)
     val emptyGraph = Graph(Nil, Nil)
 
     (emptyGraph /: randomPoints) (extendGraph)

@@ -6,51 +6,6 @@ import aaarne.tum.rmp.geometry.LineSegment
 import breeze.linalg._
 import breeze.plot._
 
-trait RandomTreePathPlanner extends PathPlanner {
-
-  val stepSize = 0.2
-  val maxTrials = 10000
-
-  case class RRTTree(tree: Tree[Int], coordinates: Map[Int, Point]) {
-
-    def addSample: RRTTree = {
-      val randomPoint: Point = samplePoint
-      val (n, closest) = coordinates.minBy(_._2 dist randomPoint)
-
-      val p1: Vector[Double] = closest
-      val p2: Vector[Double] = randomPoint
-      val newVector = p1 + stepSize * (p2 - p1)
-      val newPoint = Point(newVector(0), newVector(1))
-      val newIndex = coordinates.keys.max + 1
-
-      if (haveEyeContact(newPoint, closest))
-        RRTTree(tree.add(n, newIndex), coordinates + (newIndex -> newPoint))
-      else
-        this.addSample // try again tail-recursively
-    }
-  }
-
-  object RRTTreeStream {
-    /**
-      * Generate infinite stream of RRT Trees rooted at start
-      *
-      * @return
-      */
-    def from(start: Point): Stream[RRTTree] =
-      Stream.iterate(RRTTree(Leaf(0), Map(0 -> start)))(tree => tree.addSample)
-  }
-
-  var pastTrees: List[RRTTree] = Nil
-
-  def haveEyeContact(p1: Point, p2: Point): Boolean =
-    obstacles forall (o => !o.lineCollides(LineSegment(p1, p2)))
-
-  def canSeePoint(point: Point)(rrt: RRTTree): Boolean = rrt match {
-    case RRTTree(_, coordinates) => coordinates.values exists hasEyeContactTo(point)
-  }
-
-  def hasEyeContactTo(p: Point)(q: Point): Boolean = haveEyeContact(p, q)
-}
 
 /**
   * RRT implementation starting a single RRT at the start node
@@ -139,3 +94,4 @@ object SimpleRRTDemo extends RRTViz with SimpleRRT {
 object RRTDemo extends RRTViz with RRT {
   override val title = "RRT Path Planning (symmetric)"
 }
+
