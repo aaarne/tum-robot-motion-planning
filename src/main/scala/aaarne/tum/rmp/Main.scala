@@ -1,7 +1,7 @@
 package aaarne.tum.rmp
 
 import aaarne.tum.rmp.configurationspace.ShowConfigurationSpace
-import aaarne.tum.rmp.pathplanning.{PRMDemo, RRTDemo, SimpleRRTDemo}
+import aaarne.tum.rmp.pathplanning.{PRMDemo, RRTDemo, RandomTreeGrowthDemo, SimpleRRTDemo}
 import aaarne.tum.rmp.visibilitygraph.ShowVisibilityGraph
 import aaarne.tum.rmp.voronoi.ShowVoronoiDiagramDemo
 
@@ -20,6 +20,7 @@ object Main extends App {
       | 2.1 Probabilistic Roadmap (PRM)
       | 2.2 Rapidly Exploring Random Tree (RRT) (single tree mode)
       | 2.3 Rapidly Exploring Random Tree (RRT) (symmetric bi-tree mode)
+      | 2.4 RRT Growth Demo
       |
       |Type 'all' to run all.
     """.stripMargin)
@@ -32,6 +33,7 @@ object Main extends App {
     "2.1" -> PRMDemo,
     "2.2" -> SimpleRRTDemo,
     "2.3" -> RRTDemo,
+    "2.4" -> RandomTreeGrowthDemo,
   )
 
   val commands: Map[String, Runnable] = exercises ++ Map(

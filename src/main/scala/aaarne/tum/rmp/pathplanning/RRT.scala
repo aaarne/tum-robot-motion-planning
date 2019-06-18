@@ -2,7 +2,6 @@ package aaarne.tum.rmp.pathplanning
 
 import java.awt.Color
 
-import aaarne.tum.rmp.geometry.LineSegment
 import breeze.linalg._
 import breeze.plot._
 

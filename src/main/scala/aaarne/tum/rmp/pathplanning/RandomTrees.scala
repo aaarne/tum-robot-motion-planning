@@ -24,7 +24,7 @@ trait RandomTreePathPlanner extends PathPlanner {
       val newIndex = coordinates.keys.max + 1
 
       if (haveEyeContact(newPoint, closest))
-        RRTTree(tree.add(n, newIndex), coordinates + (newIndex -> newPoint))
+        RRTTree(tree.add(parent = n, value = newIndex), coordinates + (newIndex -> newPoint))
       else
         this.grow // try again tail-recursively
     }
@@ -54,7 +54,7 @@ trait RandomTreePathPlanner extends PathPlanner {
 
 object RandomTreeGrowthDemo extends RandomTreePathPlanner with PathPlannerDemo {
 
-  val n = 1000
+  val n = 500
   override val stepSize: Double = 0.5
 
   override def run(): Unit = {
@@ -78,7 +78,7 @@ object RandomTreeGrowthDemo extends RandomTreePathPlanner with PathPlannerDemo {
       x = orderedPoints.map(_.x),
       y = orderedPoints.map(_.y),
       style = '-',
-      colorcode = "100,100,100"
+      colorcode = "r"
     )
   }
 
