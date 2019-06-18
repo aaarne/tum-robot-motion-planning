@@ -68,9 +68,16 @@ class GraphSearchSuite extends FlatSpec with Matchers {
   }
 
   "The UCS" should "return the path 1->3->2->4 on the cost graph" in new GraphSearchTestEnvironment {
-    ucs(graphWithCost, 1, 4) match {
+    ucs(graphWithCostDouble, 1, 4) match {
       case None => fail()
       case Some(solution) => solution should be (List(1, 3, 2, 4))
+    }
+  }
+
+  it should "work on the same graph, but with Int cost" in new GraphSearchTestEnvironment {
+    ucs(graphWithCostInt, 1, 4) match {
+      case None => fail()
+      case Some(solution) => solution should be(List(1, 3, 2, 4))
     }
   }
 
@@ -126,7 +133,14 @@ class GraphSearchSuite extends FlatSpec with Matchers {
       6 -> List(4, 5),
     )
 
-    val graphWithCost: Map[Int, List[(Int, Double)]] = Map(
+    val graphWithCostDouble: Map[Int, List[(Int, Double)]] = Map(
+      1 -> List((2, 3), (3, 1), (4, 50)),
+      2 -> List((4, 2)),
+      3 -> List((4, 4), (2, 1)),
+      4 -> Nil,
+    )
+
+    val graphWithCostInt: Map[Int, List[(Int, Int)]] = Map(
       1 -> List((2, 3), (3, 1), (4, 50)),
       2 -> List((4, 2)),
       3 -> List((4, 4), (2, 1)),

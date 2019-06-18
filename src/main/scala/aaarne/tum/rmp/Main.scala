@@ -6,6 +6,7 @@ import aaarne.tum.rmp.visibilitygraph.ShowVisibilityGraph
 import aaarne.tum.rmp.voronoi.ShowVoronoiDiagramDemo
 
 import scala.collection.immutable.Stream.continually
+import scala.io.StdIn.readLine
 
 object Main extends App {
 
@@ -42,7 +43,7 @@ object Main extends App {
     }
   )
 
-  continually(scala.io.StdIn.readLine("Select exercise (e.g. '2.3') -> ")) map commands.get forall {
+  continually(readLine("Select exercise (e.g. '2.3') -> ")) map commands.get forall {
     case Some(ex) => ex.run(); true
     case None => false
   }

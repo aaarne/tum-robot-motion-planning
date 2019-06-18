@@ -11,6 +11,8 @@ import breeze.plot._
   */
 trait SimpleRRT extends RandomTreePathPlanner {
 
+  override val stepSize = 0.5
+
   override def plan(start: Point, destination: Point): Option[Path] =
     RRTTreeStream from start take maxTrials find canSeePoint(destination) map computePath(destination)
 
@@ -28,6 +30,8 @@ trait SimpleRRT extends RandomTreePathPlanner {
   * RRT implementation starting a RRT on both, the start and the goal node
   */
 trait RRT extends RandomTreePathPlanner {
+
+  override val stepSize = 0.2
 
   override def plan(start: Point, destination: Point): Option[Path] = {
 

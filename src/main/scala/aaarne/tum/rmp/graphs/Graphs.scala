@@ -5,7 +5,7 @@ import breeze.numerics.abs
 
 import scala.annotation.tailrec
 
-object Graphs {
+trait GraphSearch {
 
   /**
     * Perform breadth first search
@@ -15,9 +15,9 @@ object Graphs {
     * @param goal  end node
     * @return Shortest path solution if there is one, None otherwise
     */
-  def bfs[Vertex](g: Vertex => List[Vertex], start: Vertex, goal: Vertex): Option[List[Vertex]] = {
+  def bfs[V](g: V => List[V], start: V, goal: V): Option[List[V]] = {
 
-    @tailrec def bfsrec(frontier: List[Vertex], explored: List[Vertex], transitions: Map[Vertex, Vertex]): Option[List[Vertex]] =
+    @tailrec def bfsrec(frontier: List[V], explored: List[V], transitions: Map[V, V]): Option[List[V]] =
       frontier match {
         case Nil => None
         case node :: tail if node == goal => Some(extractPath(start, goal, transitions))
@@ -38,9 +38,9 @@ object Graphs {
     * @param goal  end node
     * @return The DFS solution path or None if no solution
     */
-  def dfs[Vertex](g: Vertex => List[Vertex], start: Vertex, goal: Vertex): Option[List[Vertex]] = {
+  def dfs[V](g: V => List[V], start: V, goal: V): Option[List[V]] = {
 
-    @tailrec def dfsrec(frontier: List[Vertex], explored: List[Vertex], transitions: Map[Vertex, Vertex]): Option[List[Vertex]] =
+    @tailrec def dfsrec(frontier: List[V], explored: List[V], transitions: Map[V, V]): Option[List[V]] =
       frontier match {
         case Nil => None
         case node :: tail if node == goal => Some(extractPath(start, goal, transitions))
@@ -60,8 +60,8 @@ object Graphs {
     * @param goal  end node
     * @return The shortest path solution path or None if no solution
     */
-  def ucs[Vertex](g: Vertex => List[(Vertex, Double)], start: Vertex, goal: Vertex): Option[List[Vertex]] =
-    astar(g, (_: Vertex) => 0.0, start, goal)
+  def ucs[V, C](g: V => List[(V, C)], start: V, goal: V)(implicit num: Numeric[C]): Option[List[V]] =
+    astar(g, (_: V) => num.zero, start, goal)
 
 
   /**
@@ -74,32 +74,35 @@ object Graphs {
     * @return The shortest path solution path or None if no solution
     * @return
     */
-  def astar[Vertex](g: Vertex => List[(Vertex, Double)], heuristics: Vertex => Double, start: Vertex, goal: Vertex): Option[List[Vertex]] = {
+  def astar[V, C](g: V => List[(V, C)], heuristics: V => C, start: V, goal: V)(implicit num: Numeric[C]): Option[List[V]] = {
+    import num._
 
-    @tailrec def astarrec(frontier: List[(Vertex, Double, Double)], explored: List[Vertex], transitions: Map[Vertex, Vertex]): Option[List[Vertex]] =
+    case class ★(vertex: V, heuristicCost: C, pathCost: C)
+
+    @tailrec def astarrec(frontier: List[★], explored: List[V], transitions: Map[V, V]): Option[List[V]] =
       frontier match {
         case Nil => None
-        case (node, _, _) :: tail if node == goal => Some(extractPath(start, goal, transitions))
-        case (node, _, pathCost) :: tail =>
+        case ★(node, _, _) :: tail if node == goal => Some(extractPath(start, goal, transitions))
+        case ★(node, _, pathCost) :: tail =>
           val children = (g(node) filterNot (c => (explored contains c._1) || (c._1 == node))) map {
-            case (v, c) => (v, pathCost + c + heuristics(v), pathCost + c)
+            case (v, c) => ★(v, pathCost + c + heuristics(v), pathCost + c)
           }
 
-          val newTransitions: List[Vertex] = children.map(_._1) diff tail.filterNot {
-            case (v, heuristicCost, pathCost) => children.find(n => n._1 == v) match {
+          val newTransitions: List[V] = children.map { case ★(v, _, _) => v } diff tail.filterNot {
+            case ★(v, heuristicCost, _) => children.find { case ★(n, _, _) => n == v } match {
               case None => false
-              case Some((v1, heuristicCost1, pathCost1)) => heuristicCost1 < heuristicCost
+              case Some(★(_, heuristicCost1, _)) => heuristicCost1 < heuristicCost
             }
-          }.map {case (v, _, _) => v}
+          }.map { case ★(v, _, _) => v }
 
-          val updatedFrontier = (tail ++ children).groupBy(_._1).toList.map {
-            case (v, states) => (v, states.map(_._2).min, states.map(_._3).min)
-          }.sortBy(_._2)
+          val updatedFrontier = (tail ++ children).groupBy { case ★(v, _, _) => v }.toList.map {
+            case (v, states) => ★(v, states.map { case ★(_, hc, _) => hc }.min, states.map { case ★(_, _, pc) => pc }.min)
+          }.sortBy { case ★(_, hc, _) => hc }
 
           astarrec(updatedFrontier, node :: explored, transitions ++ newTransitions.map(v => v -> node))
       }
 
-    astarrec((start, heuristics(start), 0.0) :: Nil, Nil, Map.empty)
+    astarrec(★(start, heuristics(start), zero) :: Nil, Nil, Map.empty)
   }
 
   /**
@@ -110,14 +113,17 @@ object Graphs {
     * @param transitions all transitions made in graph search
     * @return the path from start to goal using the transitions in the map
     */
-  private def extractPath[Vertex](from: Vertex, to: Vertex, transitions: Map[Vertex, Vertex]): List[Vertex] = {
+  private def extractPath[V](from: V, to: V, transitions: Map[V, V]): List[V] = {
 
-    @tailrec def loop(v: Vertex, path: List[Vertex]): List[Vertex] =
+    @tailrec def loop(v: V, path: List[V]): List[V] =
       if (v == from) path.reverse :+ to
       else loop(transitions(v), path :+ transitions(v))
 
     loop(to, Nil)
   }
+}
+
+trait GraphConnectivity {
 
   /**
     * Compute number of connected components in the graph
@@ -144,3 +150,5 @@ object Graphs {
     eigvals.count(p => abs(p) < 1e-6)
   }
 }
+
+object Graphs extends GraphSearch with GraphConnectivity
