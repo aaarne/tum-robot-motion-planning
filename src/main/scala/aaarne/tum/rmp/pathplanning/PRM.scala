@@ -17,7 +17,7 @@ trait PRM extends PathPlanner {
 
     def toMapFormat: Map[Int, List[Int]] = {
       val raw = edges.groupBy(_._1).mapValues(l => l.map(_._2))
-      val missingKeys = vertices.indices diff raw.keys.toList
+      val missingKeys = vertices.indices diff raw.keys.toList#
       raw ++ Map(missingKeys map (i => i -> Nil): _*)
     }
 

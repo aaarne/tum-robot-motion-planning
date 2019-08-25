@@ -77,32 +77,32 @@ trait GraphSearch {
   def astar[V, C](g: V => List[(V, C)], heuristics: V => C, start: V, goal: V)(implicit num: Numeric[C]): Option[List[V]] = {
     import num._
 
-    case class ★(vertex: V, heuristicCost: C, pathCost: C)
+    case class $(vertex: V, heuristicCost: C, pathCost: C)
 
-    @tailrec def astarrec(frontier: List[★], explored: List[V], transitions: Map[V, V]): Option[List[V]] =
+    @tailrec def astarrec(frontier: List[$], explored: List[V], transitions: Map[V, V]): Option[List[V]] =
       frontier match {
         case Nil => None
-        case ★(node, _, _) :: tail if node == goal => Some(extractPath(start, goal, transitions))
-        case ★(node, _, pathCost) :: tail =>
+        case $(node, _, _) :: tail if node == goal => Some(extractPath(start, goal, transitions))
+        case $(node, _, pathCost) :: tail =>
           val children = (g(node) filterNot (c => (explored contains c._1) || (c._1 == node))) map {
-            case (v, c) => ★(v, pathCost + c + heuristics(v), pathCost + c)
+            case (v, c) => $(v, pathCost + c + heuristics(v), pathCost + c)
           }
 
-          val newTransitions: List[V] = children.map { case ★(v, _, _) => v } diff tail.filterNot {
-            case ★(v, heuristicCost, _) => children.find { case ★(n, _, _) => n == v } match {
+          val newTransitions: List[V] = children.map { case $(v, _, _) => v } diff tail.filterNot {
+            case $(v, heuristicCost, _) => children.find { case $(n, _, _) => n == v } match {
               case None => false
-              case Some(★(_, heuristicCost1, _)) => heuristicCost1 < heuristicCost
+              case Some($(_, heuristicCost1, _)) => heuristicCost1 < heuristicCost
             }
-          }.map { case ★(v, _, _) => v }
+          }.map { case $(v, _, _) => v }
 
-          val updatedFrontier = (tail ++ children).groupBy { case ★(v, _, _) => v }.toList.map {
-            case (v, states) => ★(v, states.map { case ★(_, hc, _) => hc }.min, states.map { case ★(_, _, pc) => pc }.min)
-          }.sortBy { case ★(_, hc, _) => hc }
+          val updatedFrontier = (tail ++ children).groupBy { case $(v, _, _) => v }.toList.map {
+            case (v, states) => $(v, states.map { case $(_, hc, _) => hc }.min, states.map { case $(_, _, pc) => pc }.min)
+          }.sortBy { case $(_, hc, _) => hc }
 
           astarrec(updatedFrontier, node :: explored, transitions ++ newTransitions.map(v => v -> node))
       }
 
-    astarrec(★(start, heuristics(start), zero) :: Nil, Nil, Map.empty)
+    astarrec($(start, heuristics(start), zero) :: Nil, Nil, Map.empty)
   }
 
   /**
